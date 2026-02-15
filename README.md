@@ -80,6 +80,18 @@ Then execute the generated plan with orchestrator.
 - Slurm production checklist: `ops/slurm-production-checklist.md`
 - BO playbook: `ops/bo-active-learning-playbook.md`
 
+## Publish to GitHub
+
+Create an empty GitHub repository first, then run:
+
+```bash
+./tools/publish_github.sh <github_repo_url>
+```
+
+Examples:
+- `./tools/publish_github.sh git@github.com:<user>/fusion.git`
+- `./tools/publish_github.sh https://github.com/<user>/fusion.git`
+
 ## License
 
 Apache-2.0. See `LICENSE`.
