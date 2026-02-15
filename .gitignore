@@ -26,6 +26,24 @@ pic-warpx-25.11/
 
 # Local/private evidence manifests
 evidence/internal/helion_internal_parity_manifest.json
+evidence/index.md
+evidence/internal/README.md
+evidence/pack/index.md
+
+# Internal docs that should not be open-sourced
+3d_driver_spec.md
+3d_regression_checklist.md
+b2_gate_regression.md
+checklist.md
+next.md
+report_draft.md
+sim_ops_orchestrator_runbook.md
+tutorial_beginner_helion_ops.md
+docs/helion-style-design-trade-study-example.md
+docs/procurement-ready-spec-example.md
+ops/bo-active-learning-playbook.md
+ops/slurm-production-checklist.md
+patent/idea.md
 
 # Environment files
 .env
