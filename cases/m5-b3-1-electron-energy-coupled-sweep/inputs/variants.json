@@ -1,0 +1,16 @@
+{
+  "control": "m5-b3-1-electron-energy-coupled-off",
+  "treatment": "m5-b3-1-electron-energy-coupled-on",
+  "min_outputs": 6,
+  "writeback_ratio_min": 0.9,
+  "eta_std_min": 1.0e-12,
+  "observable_metric": "auto",
+  "observable_candidates": [
+    "mag_energy_final",
+    "field_energy_final",
+    "b_rms_final"
+  ],
+  "observable_min_rel_diff": 0.05,
+  "observable_norm_eps": 1.0e-30,
+  "observable_abs_floor": 1.0e-12
+}

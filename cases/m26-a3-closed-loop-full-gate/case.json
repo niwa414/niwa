@@ -1,0 +1,86 @@
+{
+  "id": "m26-a3-closed-loop-full-gate",
+  "description": "A3 full gate: strong closed-loop + response sensitivity + integrated circuit-load chain.",
+  "engine": "pipeline",
+  "gate_class": "a3_full_gate",
+  "physical_validity": "a3_closed_loop_integrated",
+  "inputs": [
+    "../../outputs/m5-a3-closed-loop-strong/analysis/PASSFAIL.json",
+    "../../outputs/m16-a3-circuit-radius-response/analysis/PASSFAIL.json",
+    "../../outputs/m26-p2-circuit-load-integration/analysis/PASSFAIL.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-a3-full-gate",
+      "cmd": [
+        "{python}",
+        "tools/analyze_a3_full_gate.py",
+        "--strong-case",
+        "m5-a3-closed-loop-strong",
+        "--response-case",
+        "m16-a3-circuit-radius-response",
+        "--integrated-case",
+        "m26-p2-circuit-load-integration",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/a3_full_gate_summary.md"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "strong_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "response_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "integrated_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "strong_coupling_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "response_driver_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "integrated_energy_chain_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "driver_response_ratio",
+      "op": ">=",
+      "value": 1.1
+    },
+    {
+      "metric": "a3_full_gate_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/a3_full_gate_summary.md"
+  ]
+}

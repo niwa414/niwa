@@ -1,0 +1,119 @@
+{
+  "campaign_name": "helion-live-tilt-tradestudy",
+  "output_root": "outputs/bo/helion-live-tilt-tradestudy",
+  "generated_cases_root": "cases/helion-live-tilt-tradestudy/bo_generated",
+  "knob": {
+    "name": "shift",
+    "relative_min": -0.03,
+    "relative_max": 0.03,
+    "grid_points": 121,
+    "min_separation": 0.001,
+    "absolute_base_value": 0.2,
+    "token_scale": 10000,
+    "token_width": 5
+  },
+  "objective": {
+    "compression_key": "compression_ratio",
+    "recapture_key": "recapture_efficiency",
+    "tilt_key": "tilt_amp_max",
+    "weights": {
+      "recapture": 0.5,
+      "tilt": 2.0,
+      "load_penalty": 0.25
+    }
+  },
+  "constraints": {
+    "energy_ok_key": "energy_accounting_ok",
+    "load_max": 40000000.0,
+    "load_metric_keys": [
+      "coil_force_peak",
+      "load_force_proxy_peak_N",
+      "dphi_dt_peak_V",
+      "vind_peak_V"
+    ]
+  },
+  "fidelity": {
+    "default": "hybrid_pic",
+    "levels": [
+      {
+        "name": "mhd_proxy",
+        "cost": 1.0,
+        "template_case": "cases/helion-demo-tilt-tradestudy/baseline/case.json",
+        "stage": "analyze",
+        "retries": 1,
+        "case_patch": {
+          "knob_file_relpath": null,
+          "knob_json_path": []
+        }
+      },
+      {
+        "name": "hybrid_pic",
+        "cost": 6.0,
+        "template_case": "cases/helion-live-tilt-tradestudy/baseline/case.json",
+        "stage": "all",
+        "retries": 1,
+        "case_patch": {
+          "knob_file_relpath": "inputs/h5_seed_config.json",
+          "knob_json_path": [
+            "opmd_double_seed_shift",
+            0
+          ],
+          "absolute_base_value": 0.2
+        }
+      }
+    ],
+    "batch_quota": {
+      "mhd_proxy": 2,
+      "hybrid_pic": 1
+    },
+    "allow_cross_fidelity_same_point": false
+  },
+  "planner": {
+    "batch_size": 3,
+    "beta": 2.0,
+    "feasibility_length_scale": 0.008,
+    "warmup_random_points": 3,
+    "random_seed": 42
+  },
+  "orchestrator_plan": {
+    "name_prefix": "bo-active-learning",
+    "description": "Bayesian optimization proposed next cases",
+    "max_retries": 1,
+    "slurm": {
+      "partition": "gpu",
+      "time": "12:00:00",
+      "cpus_per_task": 8,
+      "gpus": 1,
+      "mem": "64G",
+      "extra_args": []
+    }
+  },
+  "bootstrap": {
+    "cases": [
+      {
+        "case_id": "helion-live-tilt-tradestudy-baseline",
+        "fidelity": "hybrid_pic"
+      },
+      {
+        "case_id": "helion-live-tilt-tradestudy-knob-minus",
+        "fidelity": "hybrid_pic"
+      },
+      {
+        "case_id": "helion-live-tilt-tradestudy-knob-plus",
+        "fidelity": "hybrid_pic"
+      },
+      {
+        "case_id": "helion-demo-tilt-tradestudy-baseline",
+        "fidelity": "mhd_proxy"
+      },
+      {
+        "case_id": "helion-demo-tilt-tradestudy-knob-minus",
+        "fidelity": "mhd_proxy"
+      },
+      {
+        "case_id": "helion-demo-tilt-tradestudy-knob-plus",
+        "fidelity": "mhd_proxy"
+      }
+    ]
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "id": "m26-d2-magnetic-load-interface",
+  "description": "Engineering magnetic-load interface from circuit COIL diagnostics (force/pressure/impulse proxies + energy chain).",
+  "engine": "pipeline",
+  "gate_class": "d1_magnetic_load_interface",
+  "physical_validity": "engineering_interface_partial",
+  "inputs": [
+    "../../outputs/m17-b2-circuit-mvp-mainline-Rload2000-coil4/raw/run/diag/reducedfiles/COIL.txt",
+    "../../outputs/m17-b2-circuit-mvp-mainline-Rload2000-coil4/analysis/metrics.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_analysis}"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-magnetic-load-interface",
+      "cmd": [
+        "{python}",
+        "tools/analyze_magnetic_load_interface.py",
+        "--source-case",
+        "m17-b2-circuit-mvp-mainline-Rload2000-coil4",
+        "--metrics-out",
+        "{output_analysis}/metrics.json",
+        "--series-out",
+        "{output_analysis}/magnetic_load_series.csv",
+        "--summary-out",
+        "{output_analysis}/magnetic_load_summary.md"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "input_case_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "coil_series_len",
+      "op": ">=",
+      "value": 100
+    },
+    {
+      "metric": "dphi_dt_peak_V",
+      "op": ">",
+      "value": 1000.0
+    },
+    {
+      "metric": "force_proxy_peak_N",
+      "op": ">",
+      "value": 1.0
+    },
+    {
+      "metric": "eta_recaptured",
+      "op": ">=",
+      "value": 0.3
+    },
+    {
+      "metric": "energy_chain_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "interface_ready",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/magnetic_load_series.csv",
+    "{output_analysis}/magnetic_load_summary.md"
+  ]
+}

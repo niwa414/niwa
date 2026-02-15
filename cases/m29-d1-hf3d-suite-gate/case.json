@@ -1,0 +1,66 @@
+{
+  "id": "m29-d1-hf3d-suite-gate",
+  "description": "HF3D suite gate for the three Helion-style 3D animation deliverables.",
+  "engine": "pipeline",
+  "gate_class": "hf3d_suite",
+  "physical_validity": "visual_high_fidelity_3d",
+  "inputs": [
+    "../../outputs/m29-hf3d-1-merge-compression-recapture/analysis/PASSFAIL.json",
+    "../../outputs/m29-hf3d-2-formation-microinstability/analysis/PASSFAIL.json",
+    "../../outputs/m29-hf3d-3-engineering-diffusion-load/analysis/PASSFAIL.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-hf3d-suite",
+      "cmd": [
+        "{python}",
+        "tools/analyze_hf3d_suite.py",
+        "--merge-case",
+        "m29-hf3d-1-merge-compression-recapture",
+        "--formation-case",
+        "m29-hf3d-2-formation-microinstability",
+        "--engineering-case",
+        "m29-hf3d-3-engineering-diffusion-load",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/hf3d_suite.md"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "merge_recapture_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "formation_microinstability_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "engineering_diffusion_load_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "all_hf3d_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/hf3d_suite.md"
+  ]
+}

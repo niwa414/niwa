@@ -1,0 +1,98 @@
+{
+  "id": "m28-d1-helion-internal-parity-gate",
+  "description": "Strict public-equivalence aggregator plus internal-only parity blocker audit.",
+  "engine": "pipeline",
+  "gate_class": "helion_internal_parity_progress",
+  "physical_validity": "strict_public_plus_internal_audit",
+  "inputs": [
+    "../../outputs/m27-d1-helion-full-requirements-gate/analysis/PASSFAIL.json",
+    "../../outputs/m27-d2-helion-usage-scenarios-gate/analysis/PASSFAIL.json",
+    "../../outputs/m28-s1-runtime-stack-evidence/analysis/PASSFAIL.json",
+    "../../outputs/m28-s2-stability-nonproxy-gate/analysis/PASSFAIL.json",
+    "../../outputs/m28-s3-em-diffusion-nonproxy-gate/analysis/PASSFAIL.json",
+    "../../outputs/m26-d3-helion-readiness-audit/analysis/PASSFAIL.json",
+    "../../evidence/internal/helion_internal_parity_manifest.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-helion-internal-parity",
+      "cmd": [
+        "{python}",
+        "tools/analyze_helion_internal_parity.py",
+        "--full-case",
+        "m27-d1-helion-full-requirements-gate",
+        "--usage-case",
+        "m27-d2-helion-usage-scenarios-gate",
+        "--runtime-case",
+        "m28-s1-runtime-stack-evidence",
+        "--stability-case",
+        "m28-s2-stability-nonproxy-gate",
+        "--em-case",
+        "m28-s3-em-diffusion-nonproxy-gate",
+        "--readiness-case",
+        "m26-d3-helion-readiness-audit",
+        "--internal-manifest",
+        "evidence/internal/helion_internal_parity_manifest.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/helion_internal_parity.md"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "full_requirements_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "usage_scenarios_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "runtime_stack_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "stability_nonproxy_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "em_diffusion_nonproxy_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "readiness_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "strict_public_stack_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "internal_parity_progress_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/helion_internal_parity.md"
+  ]
+}

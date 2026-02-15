@@ -1,0 +1,166 @@
+{
+  "id": "m1-b5-mhd-to-hybrid-handoff",
+  "description": "Athena++ VTK -> openPMD -> WarpX Hybrid-PIC handoff gate.",
+  "engine": "pipeline",
+  "inputs": [
+    "inputs/handoff_config.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-handoff",
+      "cmd": [
+        "{python}",
+        "tools/prepare_b5_handoff.py",
+        "--config",
+        "{case_dir}/inputs/handoff_config.json",
+        "--output-dir",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx",
+      "timeout_s": 1800,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-rz/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver.py",
+        "--mode",
+        "fluid-init",
+        "--fluid-file",
+        "{output_raw}/run/fluid_init.h5",
+        "--b-file",
+        "{output_raw}/run/B_ext.h5",
+        "--nr",
+        "32",
+        "--nz",
+        "128",
+        "--r-max",
+        "4.0",
+        "--z-max",
+        "16.0",
+        "--ppc",
+        "2",
+        "--hybrid",
+        "--n-azimuthal-modes",
+        "1",
+        "--max-steps",
+        "20",
+        "--diag-period",
+        "4",
+        "--monitor-interval",
+        "1",
+        "--drop-threshold",
+        "100",
+        "--run-tag",
+        "m1-b5-handoff",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-warpx",
+      "cmd": [
+        "{python}",
+        "tools/analyze_warpx_tilt_case.py",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--metadata",
+        "{output_raw}/run/warpx_run_m1-b5-handoff.json",
+        "--metrics",
+        "{output_analysis}/warpx_metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--csv",
+        "{output_analysis}/mode_spectrum.csv",
+        "--max-mode",
+        "0",
+        "--skip-amp"
+      ]
+    },
+    {
+      "name": "analyze-handoff",
+      "cmd": [
+        "{python}",
+        "tools/analyze_handoff_case.py",
+        "--handoff-meta",
+        "{output_raw}/run/handoff_meta.json",
+        "--warpx-metrics",
+        "{output_analysis}/warpx_metrics.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/mapping_summary.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "opmd_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "opmd_fields_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "opmd_no_nan",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "mass_rel_diff",
+      "op": "<=",
+      "value": 1e-2
+    },
+    {
+      "metric": "mag_energy_rel_diff",
+      "op": "<=",
+      "value": 1e-2
+    },
+    {
+      "metric": "warpx_ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "warpx_num_outputs",
+      "op": ">=",
+      "value": 5
+    },
+    {
+      "metric": "warpx_no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "warpx_drop_breach",
+      "op": "==",
+      "value": false
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/handoff_meta.json",
+    "{output_raw}/run/fluid_init.h5",
+    "{output_raw}/run/B_ext.h5",
+    "{output_raw}/run/warpx_run_m1-b5-handoff.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/warpx_metrics.json",
+    "{output_analysis}/mapping_summary.json",
+    "{output_analysis}/mode_spectrum.csv",
+    "{output_plots}/mapping_mass_energy_compare.png",
+    "{output_plots}/field_snapshot_overlay.png",
+    "{output_plots}/energy_budget_vs_time.png",
+    "{output_plots}/density_snapshot.png"
+  ]
+}

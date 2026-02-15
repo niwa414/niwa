@@ -1,0 +1,150 @@
+{
+  "id": "m9-h4-1-mhd-seeded-hybrid-3d-rotation",
+  "description": "H4 gate: Athena++ snapshot -> openPMD (3D rotation) -> 3D Hybrid continuation.",
+  "engine": "pipeline",
+  "gate_class": "h4_gate",
+  "physical_validity": "mhd_seeded_hybrid_continuation",
+  "inputs": [
+    "inputs/handoff_config.json",
+    "inputs/warpx_args.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-h4-handoff",
+      "cmd": [
+        "{python}",
+        "tools/prepare_h4_handoff.py",
+        "--config",
+        "{case_dir}/inputs/handoff_config.json",
+        "--output-dir",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx-3d-hybrid",
+      "timeout_s": 1800,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-3d/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver_3d.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--init-mode",
+        "opmd",
+        "--opmd-fluid",
+        "{output_raw}/run/fluid_init.h5",
+        "--opmd-b",
+        "{output_raw}/run/B_ext.h5",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--run-tag",
+        "m9-h4-1-hybrid-rotation"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-h4-continuation",
+      "cmd": [
+        "{python}",
+        "tools/analyze_h4_continuation_case.py",
+        "--handoff-meta",
+        "{output_raw}/run/handoff_meta.json",
+        "--warpx-meta",
+        "{output_raw}/run/warpx_run_m9-h4-1-hybrid-rotation.json",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/mapping_summary.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "opmd_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "opmd_fields_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "opmd_no_nan",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "particle_load_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "warpx_ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "warpx_num_outputs",
+      "op": ">=",
+      "value": 10
+    },
+    {
+      "metric": "warpx_no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "warpx_drop_breach",
+      "op": "==",
+      "value": false
+    },
+    {
+      "metric": "mass_rel_diff_init",
+      "op": "<=",
+      "value": 0.02
+    },
+    {
+      "metric": "b_rms_rel_diff_init",
+      "op": "<=",
+      "value": 0.1
+    },
+    {
+      "metric": "mag_energy_rel_diff_init",
+      "op": "<=",
+      "value": 0.1
+    },
+    {
+      "metric": "rotation_mass_integral_rel_diff",
+      "op": "<=",
+      "value": 0.02
+    },
+    {
+      "metric": "mass_rel_drift_over_run",
+      "op": "<=",
+      "value": 0.05
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/handoff_meta.json",
+    "{output_raw}/run/fluid_init.h5",
+    "{output_raw}/run/B_ext.h5",
+    "{output_raw}/run/warpx_run_m9-h4-1-hybrid-rotation.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/mapping_summary.json",
+    "{output_plots}/rho_slice_mhd_vs_warpx_t0.png",
+    "{output_plots}/B_slice_mhd_vs_warpx_t0.png",
+    "{output_plots}/global_budget_vs_time.png",
+    "{output_plots}/particle_weight_hist.png"
+  ]
+}

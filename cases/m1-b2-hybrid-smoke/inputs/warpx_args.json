@@ -1,0 +1,23 @@
+{
+  "mode": "fluid-init",
+  "solver": "yee",
+  "n_azimuthal_modes": 1,
+  "hybrid": true,
+  "fluid_file": "cases/m1-b2-hybrid-smoke/inputs/fluid_init_hall_frc.h5",
+  "b_file": "cases/m1-b2-hybrid-smoke/inputs/B_ext_hall_frc.h5",
+  "max_steps": 30,
+  "dt": 5.0e-12,
+  "diag_period": 5,
+  "monitor_interval": 1,
+  "drop_threshold": 100,
+  "nr": 32,
+  "nz": 32,
+  "r_max": 2.0,
+  "z_max": 2.0,
+  "ppc": 4,
+  "max_particles": 100000,
+  "hybrid_substeps": 1,
+  "hybrid_eta": 0.0,
+  "hybrid_nfloor_scale": 0.05,
+  "run_tag": "m1-b2-hybrid-smoke"
+}

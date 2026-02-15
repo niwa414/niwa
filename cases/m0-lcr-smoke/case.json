@@ -1,0 +1,57 @@
+{
+  "id": "m0-lcr-smoke",
+  "description": "M0 pipeline smoke using the LCR solver (no plasma feedback).",
+  "engine": "lcr",
+  "inputs": [
+    "inputs/lcr_params.json"
+  ],
+  "run": [
+    {
+      "name": "lcr-sim",
+      "cmd": [
+        "{python}",
+        "tools/run_lcr_case.py",
+        "--params",
+        "{case_dir}/inputs/lcr_params.json",
+        "--out-csv",
+        "{output_analysis}/lcr_waveform.csv",
+        "--no-plot"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "lcr-analyze",
+      "cmd": [
+        "{python}",
+        "tools/analyze_lcr_case.py",
+        "--csv",
+        "{output_analysis}/lcr_waveform.csv",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "energy_rel_drift",
+      "op": "<=",
+      "value": 0.1
+    },
+    {
+      "metric": "peak_current_kA",
+      "op": ">=",
+      "value": 0.001
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/lcr_waveform.csv",
+    "{output_analysis}/metrics.json",
+    "{output_plots}/lcr_current.png",
+    "{output_plots}/lcr_b_est.png",
+    "{output_plots}/lcr_energy.png"
+  ]
+}

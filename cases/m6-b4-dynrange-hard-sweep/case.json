@@ -1,0 +1,55 @@
+{
+  "id": "m6-b4-dynrange-hard-sweep",
+  "description": "B4 dynamic range hard sweep (floor/substeps on-off).",
+  "engine": "pipeline",
+  "gate_class": "b4_hard_sweep",
+  "physical_validity": "dynrange_hard_sweep",
+  "inputs": [
+    "inputs/variants.json"
+  ],
+  "run": [
+    {
+      "name": "run-b4-hard-variants",
+      "cmd": [
+        "{python}",
+        "tools/run_b4_hard_sweep.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--stage",
+        "all"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b4-hard-sweep",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b4_hard_sweep.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/variant_summary.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "sweep_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/variant_summary.json",
+    "{output_plots}/min_density_vs_time_compare.png",
+    "{output_plots}/drop_breach_flags.png",
+    "{output_plots}/energy_or_b_rms_compare.png"
+  ]
+}

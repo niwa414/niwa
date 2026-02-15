@@ -1,0 +1,20 @@
+{
+  "vtk_pattern": "outputs/m1-a2-frc-merge-fast/raw/run/frc_merge.block0.out1.*.vtk",
+  "nr": 32,
+  "nz": 128,
+  "r_min": 0.0,
+  "r_max": 4.0,
+  "z_min": -8.0,
+  "z_max": 8.0,
+  "axis_mode": "x_z_y_r",
+  "fold_r": true,
+  "resample": false,
+  "athena_vis_path": "athena-24.0/vis/python",
+  "rho_scale": 1.0,
+  "vel_scale": 1.0,
+  "press_scale": 1.0,
+  "B_scale": 1.0,
+  "amu": 1.0,
+  "te_ratio": 1.0,
+  "te_const": null
+}

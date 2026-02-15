@@ -1,0 +1,112 @@
+{
+  "id": "m1-a2-compress-gate",
+  "description": "A2 compression gate using external EMF drive (lightweight chain).",
+  "engine": "athena",
+  "inputs": [
+    "inputs/athinput.bext_emf_compress_gate",
+    "inputs/belova_b2_mirror_ramp.csv"
+  ],
+  "run": [
+    {
+      "name": "build-athena",
+      "timeout_s": 600,
+      "cmd": [
+        "{python}",
+        "tools/build_athena.py",
+        "--athena-root",
+        "athena-24.0",
+        "--prob",
+        "frc_merge",
+        "--jobs",
+        "4",
+        "--force",
+        "--magnetic",
+        "--clean"
+      ]
+    },
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-athena",
+      "timeout_s": 900,
+      "cmd": [
+        "athena-24.0/bin/athena",
+        "-i",
+        "{case_dir}/inputs/athinput.bext_emf_compress_gate",
+        "-d",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-compress",
+      "cmd": [
+        "{python}",
+        "tools/analyze_frc_compress_case.py",
+        "--run-dir",
+        "{output_raw}/run",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--input",
+        "{case_dir}/inputs/athinput.bext_emf_compress_gate"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "num_outputs",
+      "op": ">=",
+      "value": 8
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "mass_rel_drift",
+      "op": "<=",
+      "value": 0.2
+    },
+    {
+      "metric": "total_energy_rel_drift",
+      "op": "<=",
+      "value": 1.0
+    },
+    {
+      "metric": "divB_rel",
+      "op": "<=",
+      "value": 0.001
+    },
+    {
+      "metric": "compression_ratio",
+      "op": ">=",
+      "value": 1.2
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/bext_emf_compress_gate.hst",
+    "{output_analysis}/metrics.json",
+    "{output_plots}/energy_budget.png",
+    "{output_plots}/divb_vs_time.png",
+    "{output_plots}/compression_indicator_vs_time.png",
+    "{output_plots}/density_snapshot.png",
+    "{output_logs}/run_run-athena.log",
+    "{output_logs}/run_build-athena.log"
+  ]
+}

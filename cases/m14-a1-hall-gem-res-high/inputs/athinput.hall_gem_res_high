@@ -1,0 +1,76 @@
+<comment>
+  Hall reconnection (GEM-like Harris sheet) using hall_gem problem generator.
+  Domain: 2D, x in [-12.8,12.8], y in [-6.4,6.4], periodic in x, reflecting in y.
+  Enable non-ideal terms via problem parameters (eta_hall, eta_ohm, etc.).
+</comment>
+
+<job>
+  problem_id   = hall_gem
+  maxout       = 50
+</job>
+
+<mesh>
+  ix1_bc = periodic
+  ox1_bc = periodic
+  ix2_bc = reflecting
+  ox2_bc = reflecting
+  ix3_bc = periodic
+  ox3_bc = periodic
+
+  x1min = -12.8
+  x1max =  12.8
+  x2min =  -6.4
+  x2max =   6.4
+  x3min = 0.0
+  x3max = 1.0
+
+  nx1 = 192
+  nx2 = 96
+  nx3 = 1
+</mesh>
+
+<time>
+  cfl_number = 0.10
+  nlim       = -1
+  tlim       = 25.0
+</time>
+
+<output1>
+  file_type = vtk
+  dt        = 1.0
+  variable  = prim
+</output1>
+
+<output2>
+  file_type = hst
+  dt        = 0.1
+</output2>
+
+<problem>
+  rho0                   = 1.0
+  b0                     = 1.0
+  sheet_width            = 0.5
+  p_background           = 0.1
+  perturb_amp            = 0.05
+  perturb_sigma          = 0.5
+  perturb_wavenumber     = 1
+
+  eta_hall               = 0.12
+  hall_implicit          = 0
+  hall_theta             = 0.5
+  hall_tol               = 1e-8
+  hall_max_iter          = 40
+  hall_cfl               = 0.01
+  hall_implicit_include_ohm = 0
+  eta_ohm                = 0.0
+</problem>
+
+<hydro>
+  gamma = 5.0/3.0
+  reconstruction = plm
+  riemann_solver = hlld
+</hydro>
+
+<field>
+  integration = ct
+</field>

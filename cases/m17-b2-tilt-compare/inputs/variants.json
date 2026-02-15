@@ -1,0 +1,8 @@
+{
+  "tilt_on": "m17-b2-tilt-on",
+  "tilt_off": "m17-b2-tilt-off",
+  "gamma_ratio_min": 5.0,
+  "tilt_ratio_on_min": 1.2,
+  "tilt_ratio_off_max": 1.05,
+  "t_cross_ratio_min": 1.1
+}

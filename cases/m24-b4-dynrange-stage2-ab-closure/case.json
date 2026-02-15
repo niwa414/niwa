@@ -1,0 +1,75 @@
+{
+  "id": "m24-b4-dynrange-stage2-ab-closure",
+  "description": "B4 Stage2 strict closure: strategy off/on A/B reaches target compression with quantified conservation deltas.",
+  "engine": "pipeline",
+  "gate_class": "b4_stage2_closure",
+  "physical_validity": "b4_dynrange_ab_closure",
+  "inputs": [
+    "../../outputs/m6-b4-dynrange-hard-floor/analysis/metrics.json",
+    "../../outputs/m6-b4-dynrange-hard-both/analysis/metrics.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b4-stage2-ab",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b4_stage2_ab.py",
+        "--strategy-off-metrics",
+        "outputs/m6-b4-dynrange-hard-floor/analysis/metrics.json",
+        "--strategy-on-metrics",
+        "outputs/m6-b4-dynrange-hard-both/analysis/metrics.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/ab_summary.json",
+        "--compression-metric",
+        "tilt_amp_ratio",
+        "--target-compression",
+        "2.0"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "control_reached_target_compression",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "treatment_reached_target_compression",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "both_ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "conservation_delta_quantified",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "known_gaps": [],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/ab_summary.json"
+  ]
+}

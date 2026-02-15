@@ -1,0 +1,41 @@
+{
+  "id": "m17-b2-circuit-mvp-drift-summary",
+  "description": "Circuit MVP drift observability summary (coil flux + energy0d).",
+  "engine": "pipeline",
+  "gate_class": "b2_circuit_mvp_drift_summary",
+  "physical_validity": "b2_circuit_mvp_drift_summary",
+  "run": [
+    {
+      "name": "noop",
+      "cmd": ["true"]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-drift-summary",
+      "cmd": [
+        "{python}",
+        "tools/analyze_circuit_drift_summary.py",
+        "--on-metrics",
+        "outputs/m17-b2-circuit-mvp-seedOFF-driftON-energy0d/analysis/metrics.json",
+        "--off-metrics",
+        "outputs/m17-b2-circuit-mvp-seedOFF-driftOFF-energy0d/analysis/metrics.json",
+        "--threshold",
+        "0.02",
+        "--metrics-out",
+        "{output_analysis}/metrics.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "drift_observable_in_b2",
+      "op": "==",
+      "value": false
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json"
+  ]
+}

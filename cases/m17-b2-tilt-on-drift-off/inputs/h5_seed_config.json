@@ -1,0 +1,22 @@
+{
+  "opmd_fluid_path": "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/fluid_init.h5",
+  "opmd_b_path": "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/B_ext.h5",
+  "opmd_double_seed_shift": [0.2, 0.0, 0.0],
+  "opmd_double_seed_drift": [0.36, 0.0, 0.0],
+  "drift_mag_scale": 5.0,
+  "opmd_double_seed_drift_dynamic": false,
+  "opmd_double_seed_group_ids": false,
+  "opmd_double_seed_drift_axis": "x",
+  "opmd_double_seed_symmetric": true,
+  "opmd_double_seed_drift_is_beta": true,
+  "opmd_double_seed_common_drift": [0.0, 0.1, 0.0],
+  "opmd_double_seed_common_drift_is_beta": true,
+  "tilt_seed_mode": "pos_tilt",
+  "tilt_seed_vkick_frac": 0.08,
+  "tilt_seed_bins_z": 16,
+  "tilt_seed_y_offset_amp": 0.008,
+  "tilt_seed_y_offset_profile": "tanh",
+  "tilt_seed_y_offset_z0": 0.0,
+  "tilt_seed_y_offset_k": 25.0,
+  "tilt_seed_y_offset_z_halfwidth": 0.04
+}

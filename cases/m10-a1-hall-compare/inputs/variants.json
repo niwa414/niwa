@@ -1,0 +1,12 @@
+{
+  "hall_on": "m1-a1-hall-gem",
+  "hall_off": "m10-a1-hall-gem-halloff",
+  "variants": [
+    "m1-a1-hall-gem",
+    "m10-a1-hall-gem-halloff"
+  ],
+  "abs_diff_min": 0.001,
+  "rel_diff_min": 0.05,
+  "eps": 1.0e-12,
+  "eta_tol": 1.0e-12
+}

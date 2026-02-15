@@ -1,0 +1,106 @@
+{
+  "id": "m14-a1-hall-gem-halloff-res-low",
+  "description": "A1 Hall-GEM (Hall off) resolution sweep (low).",
+  "engine": "athena",
+  "inputs": [
+    "inputs/athinput.hall_gem_halloff_res_low"
+  ],
+  "timeout_s": 1800,
+  "run": [
+    {
+      "name": "build-athena",
+      "cmd": [
+        "{python}",
+        "tools/build_athena.py",
+        "--athena-root",
+        "athena-24.0",
+        "--prob",
+        "hall_gem",
+        "--jobs",
+        "4",
+        "--magnetic"
+      ]
+    },
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-athena",
+      "cmd": [
+        "athena-24.0/bin/athena",
+        "-i",
+        "{case_dir}/inputs/athinput.hall_gem_halloff_res_low",
+        "-d",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-gem",
+      "cmd": [
+        "{python}",
+        "tools/analyze_gem_case.py",
+        "--run-dir",
+        "{output_raw}/run",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--athinput",
+        "{case_dir}/inputs/athinput.hall_gem_halloff_res_low"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "num_outputs",
+      "op": ">=",
+      "value": 1
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "mass_rel_drift",
+      "op": "<=",
+      "value": 0.001
+    },
+    {
+      "metric": "total_energy_rel_drift",
+      "op": "<=",
+      "value": 0.05
+    },
+    {
+      "metric": "divB_rel",
+      "op": "<=",
+      "value": 0.001
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/hall_gem.hst",
+    "{output_analysis}/metrics.json",
+    "{output_plots}/energy_budget.png",
+    "{output_plots}/divb_vs_time.png",
+    "{output_plots}/current_sheet_snapshot.png",
+    "{output_logs}/run_run-athena.log",
+    "{output_logs}/run_build-athena.log"
+  ],
+  "artifact_policy": {
+    "archive_pass": true,
+    "prune_raw_on_pass": true
+  }
+}

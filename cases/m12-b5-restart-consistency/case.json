@@ -1,0 +1,203 @@
+{
+  "id": "m12-b5-restart-consistency",
+  "description": "B5 restart consistency: Athena++ snapshot -> openPMD (3D extrude) -> Hybrid pre/post restart.",
+  "engine": "pipeline",
+  "gate_class": "b5_restart",
+  "physical_validity": "mhd_seeded_hybrid_restart_consistency",
+  "inputs": [
+    "inputs/handoff_config.json",
+    "inputs/warpx_args.json",
+    "inputs/warpx_args_restart.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-h4-handoff",
+      "cmd": [
+        "{python}",
+        "tools/prepare_h4_handoff.py",
+        "--config",
+        "{case_dir}/inputs/handoff_config.json",
+        "--output-dir",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx-3d-hybrid-pre",
+      "timeout_s": 1800,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-3d/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver_3d.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--init-mode",
+        "opmd",
+        "--opmd-fluid",
+        "{output_raw}/run/fluid_init.h5",
+        "--opmd-b",
+        "{output_raw}/run/B_ext.h5",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag_pre",
+        "--run-tag",
+        "m12-b5-restart-pre"
+      ]
+    },
+    {
+      "name": "run-warpx-3d-hybrid-post",
+      "timeout_s": 1800,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-3d/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver_3d.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args_restart.json",
+        "--init-mode",
+        "opmd",
+        "--opmd-fluid",
+        "{output_raw}/run/fluid_init.h5",
+        "--opmd-b",
+        "{output_raw}/run/B_ext.h5",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag_post",
+        "--run-tag",
+        "m12-b5-restart-post"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-h4-restart",
+      "cmd": [
+        "{python}",
+        "tools/analyze_h4_restart_case.py",
+        "--handoff-meta",
+        "{output_raw}/run/handoff_meta.json",
+        "--warpx-meta-before",
+        "{output_raw}/run/warpx_run_m12-b5-restart-pre.json",
+        "--warpx-meta-after",
+        "{output_raw}/run/warpx_run_m12-b5-restart-post.json",
+        "--diag-dir-before",
+        "{output_raw}/run/diag_pre",
+        "--diag-dir-after",
+        "{output_raw}/run/diag_post",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/mapping_summary.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "opmd_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "opmd_fields_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "opmd_no_nan",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "particle_load_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "warpx_ran_to_completion_pre",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "warpx_ran_to_completion_post",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "warpx_num_outputs_pre",
+      "op": ">=",
+      "value": 20
+    },
+    {
+      "metric": "warpx_num_outputs_post",
+      "op": ">=",
+      "value": 20
+    },
+    {
+      "metric": "warpx_no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "warpx_drop_breach_pre",
+      "op": "==",
+      "value": false
+    },
+    {
+      "metric": "warpx_drop_breach_post",
+      "op": "==",
+      "value": false
+    },
+    {
+      "metric": "mass_rel_diff_init",
+      "op": "<=",
+      "value": 1e-2
+    },
+    {
+      "metric": "b_rms_rel_diff_init",
+      "op": "<=",
+      "value": 1e-2
+    },
+    {
+      "metric": "mag_energy_rel_diff_init",
+      "op": "<=",
+      "value": 1e-2
+    },
+    {
+      "metric": "restart_jump_mass",
+      "op": "<=",
+      "value": 1e-4
+    },
+    {
+      "metric": "restart_jump_b_rms",
+      "op": "<=",
+      "value": 1e-3
+    },
+    {
+      "metric": "restart_jump_mag_energy",
+      "op": "<=",
+      "value": 1e-3
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/handoff_meta.json",
+    "{output_raw}/run/fluid_init.h5",
+    "{output_raw}/run/B_ext.h5",
+    "{output_raw}/run/warpx_run_m12-b5-restart-pre.json",
+    "{output_raw}/run/warpx_run_m12-b5-restart-post.json",
+    "{output_raw}/run/checkpoints/chk00100",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/mapping_summary.json",
+    "{output_plots}/rho_slice_mhd_vs_warpx_t0.png",
+    "{output_plots}/B_slice_mhd_vs_warpx_t0.png",
+    "{output_plots}/global_budget_vs_time_pre.png",
+    "{output_plots}/global_budget_vs_time_post.png",
+    "{output_plots}/particle_weight_hist.png"
+  ]
+}

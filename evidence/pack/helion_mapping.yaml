@@ -1,0 +1,709 @@
+# Explicit mapping from checklist items to case IDs.
+
+A1:
+  title: Hall-MHD baseline (GEM)
+  coverage: full
+  primary_cases:
+    - m14-a1-hall-compare-res-low
+    - m14-a1-hall-compare-res-mid
+    - m14-a1-hall-compare-res-high
+  supplemental_cases:
+    - m10-a1-hall-compare
+  rationale_override: "Resolution sweep (96x48, 128x64, 192x96) keeps peak_time stable (2.000186-2.000885) and divB_rel improves with resolution (8.92e-4 -> 4.51e-4 -> 1.83e-4); energy drift remains 0. Peak_value is resolution-sensitive (non-monotonic), so interpretation should be paired with hall-off compare rather than treated as strictly converged. Differential Hall-on/off metrics (delta_peak_value, ratio_peak_value) remain stable across resolutions (ratio ~1.016-1.046), reducing sensitivity to absolute peak amplitude."
+
+A2:
+  title: Merging / compression chain
+  coverage: full
+  primary_cases:
+    - m13-a2-formation-translation-nonfast-lite
+  supplemental_cases:
+    - m5-a2-formation-translation-gate
+  rationale_override: "Non-fast lite run: tlim=6.0, output1 dt=0.25, v_inflow=0.1, v_bulk=0.24; psi_closed_persist_outputs=24; formation_time_frac~0.04167; centroid_shift_abs~0.05437; wall_time_s~354s; archive_size_gb~0.0048. Fast gate retained as supplemental."
+
+A3:
+  title: Dynamic circuit-plasma closed-loop
+  coverage: full
+  primary_cases:
+    - m26-a3-closed-loop-full-gate
+  supplemental_cases:
+    - m5-a3-closed-loop-strong
+    - m16-a3-circuit-radius-response
+    - m4-a3-closed-loop-circuit-gate
+    - m26-p2-circuit-load-integration
+  rationale_override: "A3 is promoted to a full integration gate by combining strong per-step coupling, explicit response-sensitivity evidence, and integrated circuit-load/recapture checks in one PASS artifact."
+
+A3.1:
+  title: Closed-loop response sensitivity (radius proxy)
+  coverage: partial
+  primary_cases:
+    - m16-a3-circuit-radius-response
+  rationale_override: "Driver response is observed under a +30% LCR drive perturbation (B_est increases, driver_response_ratio >= 1.1). Known gap: radius response is not observed in the current window (radius_rms_range_ratio and r_proxy_b_rms_range_ratio ~1.0); requires follow-up on a plasma-coupled response signal or longer/stronger physical response window."
+
+A4:
+  title: Cut-cell / embedded boundary geometry
+  coverage: full
+  primary_cases:
+    - m26-a4-conductor-load-gate
+  supplemental_cases:
+    - m4-a4-eb-wall-gate
+    - m6-a4-eb-wall-step
+    - m22-a4-eb-movingwall-stage2-tight
+    - m26-d2-magnetic-load-interface
+  rationale_override: "A4 now gates baseline EB wall blocking, moving-wall response, and engineering load handoff artifacts together, upgrading from geometry-only gate coverage to conductor/load interface readiness."
+
+A4.2:
+  title: EB + moving-wall short window
+  coverage: partial
+  primary_cases:
+    - m15-a4-eb-movingwall-short
+  rationale_override: "EB mask active (blocked_faces>0) + moving-wall driven (piston_metric>0) + stable completion at short window (tlim=1.4). Tuned wall profile (cyl_wall_r1=0.77) reduces geom-weighted blocked-flux residual to mass_budget_residual_geom_rel ~1.7e-3 and passes tightened layer2 gate (<=2e-3) with leak_mass_frac_max<=1e-2. Known gap: residual remains non-zero; follow-up is cut-cell/moving-wall flux closure."
+
+B1:
+  title: Hybrid PIC smoke / compare (m=0)
+  coverage: full
+  primary_cases:
+    - m8-b1-mhd-vs-hybrid-compare
+  cases:
+    - m1-b2-hybrid-smoke
+    - m2-b2-hybrid-3d-smoke
+  supplemental_cases:
+    - m6-h4-mhd-seeded-hybrid-3d-continuation
+    - m9-h4-1-mhd-seeded-hybrid-3d-rotation
+    - m7-h5-mhdseed-hybrid-merge-tilt-gamma
+    - m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampminus10
+    - m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampplus10
+  artifacts: plots/particle_energy_spectrum_compare.png
+  key_metrics:
+    early: {E_mean: 3.0199e+12, E_p90: 4.73151e+12, high_energy_frac: 0.126728}
+    mid: {E_mean: 5.84385e+14, E_p90: 9.66051e+14, high_energy_frac: 1}
+    late: {E_mean: 1.03818e+15, E_p90: 1.69824e+15, high_energy_frac: 1}
+  rationale_override: "Hybrid ion energy spectrum is captured at early/mid/late steps and compared to a density-weighted MHD Maxwellian reference. Spectrum stats (E_mean, E_p90, high_energy_frac) are reported with a log-binned window of 1e9-1e16 eV (200 bins), enabling a direct Hybrid value-add kinetic signature."
+
+B2:
+  title: 3D tilt physics gate
+  coverage: full
+  primary_cases:
+    - m26-b2-tilt-dual-regime-gate
+    - m17-b2-tilt-seedON-driftON-rhocosE002-N008-mainline
+    - m17-b2-tilt-seedON-driftOFF-rhocosE002-N008-mainline
+    - m17-b2-tilt-seedOFF-driftON-rhocosE002-N008-mainline
+    - m17-b2-tilt-seedOFF-driftOFF-rhocosE002-N008-mainline
+  supplemental_cases:
+    - m17-b2-tilt-growth-baseline
+    - m17-b2-tilt-m1-compare
+    - m17-b2-tilt-m1inject-rhocos-eps001-mainline-r2
+    - m17-b2-tilt-m1inject-rhocos-eps002-mainline-r2
+    - m17-b2-tilt-m1inject-rhocos-eps005-mainline-r2
+  pipeline_cases:
+    - m1-b2-tilt-smoke
+    - m18-b2-3d-driver-stage0
+    - m19-b2-3d-driver-stage1-gate60
+    - m20-b2-3d-driver-stage2-gate80-dense
+    - m21-b2-3d-driver-stage3-integration
+  rationale_override: "Dual-regime gate now enforces one explicit growth case (gamma>0) and one damping compare (gamma<0), plus 2x2 seed/drift sensitivity with all-negative post-forcing gammas and bounded span. Standardized rho_cos forcing (eps=0.02, N=8, diag_period=16, max_steps=513; field diags off) remains the mainline damping suite. 3D driver pipeline covers stage0 smoke + stage1 Gate60 strict PASS + stage2 Gate80 dense transition PASS + stage3 integration PASS."
+
+P1.1:
+  title: Athena++ → WarpX one-way coupling MVP
+  status: PASS
+  coverage: partial
+  primary_cases:
+    - p1p1-athena2warpx-mvp
+  artifacts:
+    - cases/p1p1-athena2warpx-mvp/case.json
+    - tools/export_athena_fields_for_warpx.py
+    - tools/run_warpx_external_field.py
+    - tools/analyze_p1p1_warpx_kpi.py
+  evidence_outputs:
+    - outputs/p1p1-athena2warpx-mvp/coupling/coupling_meta.json
+    - outputs/p1p1-athena2warpx-mvp/analysis/metrics.json
+  rationale_override: "Single-direction coupling: Athena++ openPMD fluid/B staged into WarpX, short hybrid run emits tail/aniso KPIs. Baseline drift=0.33, shift=0.22."
+
+P2:
+  title: Circuit MVP energy recovery (coil flux + field energy)
+  coverage: full
+  primary_cases:
+    - m26-p2-circuit-load-integration
+  supplemental_cases:
+    - m17-b2-circuit-mvp-drift-summary
+    - m17-b2-circuit-mvp-mainline-Rload2000-coil4
+    - m26-d2-magnetic-load-interface
+    - m17-b2-circuit-mvp-seedOFF-driftON-energy0d
+    - m17-b2-circuit-mvp-seedOFF-driftOFF-energy0d
+    - m17-b2-circuit-mvp-seedON-driftON
+    - m17-b2-circuit-mvp-seedON-driftOFF
+    - m17-b2-circuit-mvp-seedOFF-driftON
+    - m17-b2-circuit-mvp-seedOFF-driftOFF
+
+  rationale_override: "Integrated circuit-load gate links A3 closed-loop behavior, P2 energy/flux invariance, and D1 magnetic-load outputs in one pass. Circuit MVP frozen config (R_load=2000, coil_interval=4, ode_substeps=8, rk4+linear) passes energy_residual_rel<=1e-6; drift remains circuit-insensitive (coil_flux rel diff ~0, Wb_delta rel diff ~7.5e-10). Mainline now embeds load_interface_ready metrics in its regular analysis output."
+
+P3.1:
+  title: Formation0D wscale sweep (0.5/1.0/2.0)
+  coverage: partial
+  primary_cases:
+    - m17-b2-formation0d-wscale050
+    - m17-b2-formation0d-wscale100
+    - m17-b2-formation0d-wscale200
+  rationale_override: "Formation0D reduced diags (ParticleNumber/RhoMaximum/ParticleEnergy/FieldEnergy) at interval=4 yield series_len=129 and monotonic N_total_last scaling with wscale. rho_max_peak, Wk_peak, and beta_proxy_peak scale strongly with wscale while Wb_peak remains nearly constant (Wb_is_total_field=false)."
+
+P6.5:
+  title: Fast-tail proxy via u2 stats (drag on)
+  coverage: partial
+  primary_cases:
+    - m17-b2-drag-driveAmp050-r2
+    - m17-b2-drag-driveAmp100-r2
+    - m17-b2-drag-driveAmp200-r2
+  rationale_override: "U2 stats with dedup policy last_write_wins (series_len_unique=129) show u2_max_end increasing with driveAmp (0.5->1.0->2.0). u2_mean_end varies only weakly (<0.3%), consistent with a tail-sensitive proxy."
+
+P7:
+  title: End-to-end KPI join (driveAmp: field energy + circuit + tail proxy)
+  coverage: partial
+  primary_cases:
+    - m17-b2-formation0d-driveAmp050
+    - m17-b2-formation0d-driveAmp100
+    - m17-b2-formation0d-driveAmp200
+    - m17-b2-drag-driveAmp050-r2
+    - m17-b2-drag-driveAmp100-r2
+    - m17-b2-drag-driveAmp200-r2
+  supplemental_cases:
+    - m17-b2-circuit-mvp-mainline-Rload2000-coil4
+  rationale_override: "Joined KPI page: formation0d Wb_last scales with driveAmp, and u2_max_end scales monotonically under drag. Circuit MVP baseline (R_load=2000, coil_interval=4, ode_substeps=8) provides validated V_ind/e_load chain as fixed reference for the end-to-end KPI."
+
+P8:
+  title: Drive envelope staging (B-energy peak + u2 tail strength)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p8-pulseOff256-r6
+    - m17-b2-p8-pulseOff320-r6
+    - m17-b2-p8-pulseOff384-r6
+  rationale_override: "Drive envelope off_step=256/320/384 yields step_B_energy_peak==off_step. Custom U2Hist (bin_max=1e14, bins=4096) gives u2_p99_at_stepOff monotonic (6.2378e12 < 8.7769e12 < 1.1145e13) with u2_p99_at_stepEnd constant (1.436767578125e13), so u2_p99_ratio_off_to_end increases (0.434/0.611/0.776)."
+
+P9:
+  title: PulseKPI join (driveAmp + off_step)
+  coverage: partial
+  primary_cases:
+    - m17-b2-formation0d-driveAmp050
+    - m17-b2-formation0d-driveAmp100
+    - m17-b2-formation0d-driveAmp200
+    - m17-b2-p8-pulseOff256-r6
+    - m17-b2-p8-pulseOff320-r6
+    - m17-b2-p8-pulseOff384-r6
+  rationale_override: "Join-only KPI artifacts written as metrics_pulse_kpi.json. driveAmp rows combine Wb_end (formation0d), e_load/vind_peak (circuit baseline), and u2_max_end (drag u2 stats). off_step rows combine step_B_energy_peak and u2_p99_at_stepOff/u2_p99_ratio_off_to_end from custom U2Hist."
+B3:
+  title: Electron energy equation enhancements
+  coverage: full
+  primary_cases:
+    - m26-b3-transport-closure-gate
+  supplemental_cases:
+    - m5-b3-1-electron-energy-coupled-sweep
+    - m4-b3-electron-energy-sweep
+    - m23-b3-electron-energy-stage2-closure
+  rationale_override: "B3 now requires both stage-1 coupling impact and stage-2 closure metrics (electron-energy balance + Te scaling) via a single full gate."
+
+B4:
+  title: Dynamic range strategy sweeps
+  coverage: gate_only
+  primary_cases:
+    - m6-b4-dynrange-hard-sweep
+  cases:
+    - m4-b4-dynrange-sweep
+  supplemental_cases:
+    - m6-b4-dynrange-hard-control
+    - m6-b4-dynrange-hard-floor
+    - m6-b4-dynrange-hard-substeps
+    - m6-b4-dynrange-hard-both
+  rationale_override: "Hard sweep uses applied Bz, lower background, and higher drift to stress dynamic range; control hits non-finite E-field with substeps=1 while treatment (floor+substeps) remains stable. Legacy sweep retained for baseline comparison."
+
+B5:
+  title: MHD -> Hybrid handoff consistency
+  coverage: full
+  cases:
+    - m12-b5-handoff-early
+    - m12-b5-handoff-mid
+    - m12-b5-restart-consistency
+  rationale_override: "Known gap: mass_rel_diff_init ~0.7% from particle_weight_sum vs cell-integrated rho; magnetic energy / b_rms mapping stays within ~1e-7-1e-6."
+
+C1:
+  title: Historical benchmark package (simulation vs diagnostic signal)
+  coverage: full
+  primary_cases:
+    - m23-c1-historical-benchmark-belova
+  supplemental_cases:
+    - evidence-pack
+  rationale_override: "Historical benchmark proxy aligns normalized simulation flux against Belova mirror-compression waveform and emits a reproducible package (inputs + alignment summary + PASS/FAIL + plot)."
+
+C2:
+  title: Synthetic diagnostics MVP (B-dot + interferometer)
+  coverage: full
+  primary_cases:
+    - m22-c2-synthetic-diagnostics-mvp
+  rationale_override: "Synthetic diagnostics are generated from historical run outputs into outputs/<case>/analysis/synthetic with explicit B-dot and interferometer signal(t) files and no-NaN gate."
+
+C3:
+  title: Regression pack + restart consistency
+  coverage: full
+  primary_cases:
+    - m24-c3-regression-pack
+  supplemental_cases:
+    - m25-b5-restart-metadata-consistency
+    - m12-b5-restart-consistency
+  rationale_override: "Five-case regression pack runs via standardized runner; strict pass requires run_rc=0 for each case and restart consistency PASS in-pack (metadata gate + full restart case retained as supplemental)."
+
+
+P12:
+  title: Injection Tail Control (repeat + window)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p12p4-repeat008
+    - m17-b2-p12p4-repeat064
+    - m17-b2-p12p4-repeat256
+    - m17-b2-p12p6-repeat512-end256
+    - m17-b2-p12p6-repeat512-end512
+  rationale_override: "Repeat sweep: inject_particles_total 8.39e6 -> 6.71e7 -> 2.68e8 with u2_p99_at_stepOff 8.7769e12 -> 8.8501e12 -> 1.1560e13. Window effect (repeat=512): end256 vs end512 gives inject_particles_total 2.684e8 -> 5.369e8 and u2_p99_at_stepOff 1.1560e13 -> 1.2976e13."
+  window_table:
+    rows:
+      - case: m17-b2-p12p6-repeat512-end256
+        inject_particles_total: 2.684e8
+        u2_p99_at_stepOff: 1.1560e13
+        inject_main_step_max: 255
+      - case: m17-b2-p12p6-repeat512-end512
+        inject_particles_total: 5.369e8
+        u2_p99_at_stepOff: 1.2976e13
+        inject_main_step_max: 511
+
+P13:
+  title: Tail Control 2x2 (repeat + window, tail_gain)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p12p4-repeat008
+    - m17-b2-p12p4-repeat256
+    - m17-b2-p12p6-repeat512-end256
+    - m17-b2-p12p6-repeat512-end512
+  rationale_override: "PulseKPI join adds u2_p99_at_step0 and tail_gain (u2_p99_at_stepOff / u2_p99_at_step0). The 2x2 grid (repeat=256/512, end=256/512) shows tail_gain rising with repeat and with later end_step; repeat=8 provides a low-injection baseline."
+
+P15:
+  title: End-to-end coupled sweep (driveAmp)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p15-driveAmp050-repeat512-combined-r2
+    - m17-b2-p15-driveAmp100-repeat512-combined-r2
+    - m17-b2-p15-driveAmp200-repeat512-combined-r2
+  rationale_override: "driveAmp sweep with repeat=512 shows circuit response (vind_peak ~2x, e_load ~4x per 2x driveAmp) and a weak but monotonic tail co-trend (u2_p99_at_stepOff slightly increasing)."
+
+P16:
+  title: ControlSurface2x2 (repeat × driveAmp)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p16-drive050-repeat064
+    - m17-b2-p16-drive050-repeat512
+    - m17-b2-p16-drive200-repeat064
+    - m17-b2-p16-drive200-repeat512
+  rationale_override: "2x2 control surface: repeat controls tail (u2_p99_at_stepOff), driveAmp controls circuit (vind_peak/e_load); cross-coupling negligible."
+
+P17:
+  title: FormationOnControlSurface (P16 + Formation0D)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p16-drive050-repeat064-form
+    - m17-b2-p16-drive050-repeat512-form
+    - m17-b2-p16-drive200-repeat064-form
+    - m17-b2-p16-drive200-repeat512-form
+  rationale_override: "Formation0D overlaid on P16 control surface: driveAmp scales Wb_peak (~B^2), repeat scales rho_max_peak/Wk_peak. rho_delta_rel remains null (no compression detection in this window), documenting weak compression under current configuration."
+
+P18:
+  title: Phase-limited compression KPI (drive envelope off_step)
+  coverage: full
+  primary_cases:
+    - m26-p18-phase-compression-gate
+  supplemental_cases:
+    - m17-b2-p18-off192
+    - m17-b2-p18-off256
+    - m17-b2-p18-off320
+  rationale_override: "P18 is promoted to full coverage with an explicit sweep gate that enforces off_step ordering, phase compression detection, and monotonic rho_delta_rel_phase gain."
+  local_sweep_table:
+    rows:
+      - case: m17-b2-p18-off288
+        drive_envelope_off_step: 288
+        formation_kpi_phase:
+          step_rho_max_peak: 288
+          rho_delta_rel_phase: 0.3311310956
+          compression_duration_steps_phase: 36
+      - case: m17-b2-p18-off320-r2
+        drive_envelope_off_step: 320
+        formation_kpi_phase:
+          step_rho_max_peak: 320
+          rho_delta_rel_phase: 0.7416913728
+          compression_duration_steps_phase: 52
+      - case: m17-b2-p18-off352
+        drive_envelope_off_step: 352
+        formation_kpi_phase:
+          step_rho_max_peak: 348
+          rho_delta_rel_phase: 1.2811865677
+          compression_duration_steps_phase: 76
+
+P19:
+  title: End-to-end 2x2 @ off_step=352 (repeat × driveAmp)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p19-off352-drive050-repeat064
+    - m17-b2-p19-off352-drive050-repeat512
+    - m17-b2-p19-off352-drive200-repeat064
+    - m17-b2-p19-off352-drive200-repeat512
+  rationale_override: "At strong compression window off_step=352, repeat controls tail and phase compression (u2_p99_at_stepOff and rho_delta_rel_phase increase with repeat), while driveAmp controls circuit KPIs (vind_peak/e_load). Cross-coupling is weak."
+  control_surface_table:
+    rows:
+      - case: m17-b2-p19-off352-drive050-repeat064
+        driveAmp_effective: 0.5
+        inject_repeat_nsteps: 64
+        formation_kpi_phase:
+          rho_delta_rel_phase: 0.0045098334
+          compression_duration_steps_phase: 60
+        tail_kpi:
+          u2_p99_at_stepOff: 1.007080078125e13
+        circuit_kpi:
+          vind_peak: 19467302.5
+          e_load: 1.7215649498
+      - case: m17-b2-p19-off352-drive050-repeat512
+        driveAmp_effective: 0.5
+        inject_repeat_nsteps: 512
+        formation_kpi_phase:
+          rho_delta_rel_phase: 0.9803324846
+          compression_duration_steps_phase: 80
+        tail_kpi:
+          u2_p99_at_stepOff: 1.922607421875e13
+        circuit_kpi:
+          vind_peak: 19467302.5
+          e_load: 1.7215649498
+      - case: m17-b2-p19-off352-drive200-repeat064
+        driveAmp_effective: 2.0
+        inject_repeat_nsteps: 64
+        formation_kpi_phase:
+          rho_delta_rel_phase: 0.0045096889
+          compression_duration_steps_phase: 60
+        tail_kpi:
+          u2_p99_at_stepOff: 1.007080078125e13
+        circuit_kpi:
+          vind_peak: 77869275.0
+          e_load: 27.5450304858
+      - case: m17-b2-p19-off352-drive200-repeat512
+        driveAmp_effective: 2.0
+        inject_repeat_nsteps: 512
+        formation_kpi_phase:
+          rho_delta_rel_phase: 1.3303121418
+          compression_duration_steps_phase: 76
+        tail_kpi:
+          u2_p99_at_stepOff: 1.998291015625e13
+        circuit_kpi:
+          vind_peak: 77869275.0
+          e_load: 27.5450304858
+
+P20:
+  title: Control Law (DOE5 @ off_step=352)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p19-off352-drive050-repeat064
+    - m17-b2-p19-off352-drive050-repeat512
+    - m17-b2-p19-off352-drive200-repeat064
+    - m17-b2-p19-off352-drive200-repeat512
+    - m17-b2-p20-off352-drive100-repeat256
+  control_law:
+    source: outputs/p20-control-law/analysis/metrics_p20_control_law.json
+    sha1: 34ea985978961947669d80d7505720d6d9651ae7
+    circuit:
+      formula: "log(e_load) = a + b*log(driveAmp)"
+      a: 1.9295279007
+      b_driveAmp: 1.9999997719
+      r2: 0.999999999999997
+    tail:
+      formula: "log(u2_p99_at_stepOff) = a + b*log(repeat) + c*log(driveAmp)"
+      a: 28.6221406185
+      b_repeat: 0.3138287523
+      c_driveAmp: 0.0139256233
+      r2: 0.9807255186
+    phase_compression:
+      formula: "log(rho_delta_rel_phase) = a + b*log(repeat)"
+      a: -16.3133110261
+      b_repeat: 2.5860374985
+      r2: 0.9617025590
+  rationale_override: "DOE5 fit at off_step=352 yields near-perfect circuit scaling (e_load ∝ driveAmp^2), weak tail dependence on driveAmp and modest power-law on repeat (u2_p99 ∝ repeat^0.314), and strong phase compression scaling with repeat (rho_delta_rel_phase ∝ repeat^2.586)."
+
+P21:
+  title: Control Solver (inverse design, based on P20)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p19-off352-drive050-repeat064
+    - m17-b2-p19-off352-drive050-repeat512
+    - m17-b2-p19-off352-drive200-repeat064
+    - m17-b2-p19-off352-drive200-repeat512
+    - m17-b2-p20-off352-drive100-repeat256
+  solver:
+    source: outputs/p21-solver/analysis/metrics_p21_solver.json
+    sha1: 8524404d0105d19540e00973e62ae35ce8c87767
+    csv: outputs/p21-solver/analysis/p21_solver_table.csv
+  rationale_override: "Inverse solver maps target KPIs (e_load/u2_p99/rho_delta_rel_phase) to recommended driveAmp/repeat using P20 control-law coefficients. Self-check shows near-zero e_load error, modest u2 error, and higher rho error (expected from stronger power-law sensitivity)."
+
+P22:
+  title: DOE9 Control-Law Refresh (P20b/P21b)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p19-off352-drive050-repeat064
+    - m17-b2-p19-off352-drive050-repeat512
+    - m17-b2-p19-off352-drive200-repeat064
+    - m17-b2-p19-off352-drive200-repeat512
+    - m17-b2-p20-off352-drive100-repeat256
+    - m17-b2-p22-off352-drive050-repeat256
+    - m17-b2-p22-off352-drive100-repeat064
+    - m17-b2-p22-off352-drive100-repeat512
+    - m17-b2-p22-off352-drive200-repeat256
+  control_law:
+    source: outputs/p22-control-law/analysis/metrics_p22_control_law.json
+    sha1: a116471b65a042a4d9cfa7c71d775af167ad5534
+    circuit:
+      formula: "log(e_load) = a + b*log(driveAmp) + d*log(repeat)"
+      a: 1.9295278781
+      b_driveAmp: 1.9999997719
+      d_repeat: 4.4408920985e-16
+      r2: 1.0
+    tail:
+      formula: "log(u2_p99_at_stepOff) = a + b*log(repeat) + c*log(driveAmp)"
+      a: 28.6297670371
+      b_repeat: 0.3102311955
+      c_driveAmp: 0.0125691858
+      r2: 0.9723927510
+    phase_compression:
+      formula: "log(rho_delta_rel_phase) = a + b*log(repeat) + c*log(driveAmp)"
+      a: -16.2777024427
+      b_repeat: 2.5504787716
+      c_driveAmp: 0.0515030944
+      r2: 0.9339801971
+  solver:
+    source: outputs/p22-solver/analysis/metrics_p22_solver.json
+    sha1: da70f9a363d646655761453b8ff00d46dce09957
+    csv: outputs/p22-solver/analysis/p22_solver_table.csv
+  rationale_override: "DOE expanded to 9 points; circuit remains nearly perfect with negligible repeat term, tail remains weakly driveAmp-sensitive, and phase compression gains a small driveAmp term. Solver self-check: max_rel_err_eload ~4e-16, max_rel_err_u2 ~5.1%, max_rel_err_rho ~46% (rho remains the least stable axis)."
+
+P23:
+  title: Solver Robustness Metrics (log-space + rho threshold)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p19-off352-drive050-repeat064
+    - m17-b2-p19-off352-drive050-repeat512
+    - m17-b2-p19-off352-drive200-repeat064
+    - m17-b2-p19-off352-drive200-repeat512
+    - m17-b2-p20-off352-drive100-repeat256
+    - m17-b2-p22-off352-drive050-repeat256
+    - m17-b2-p22-off352-drive100-repeat064
+    - m17-b2-p22-off352-drive100-repeat512
+    - m17-b2-p22-off352-drive200-repeat256
+  solver_metrics:
+    source: outputs/p22-solver/analysis/metrics_p22_solver.json
+    sha1: da70f9a363d646655761453b8ff00d46dce09957
+    max_abs_log_err:
+      u2: 0.0520962925
+      rho: 0.6167022977
+    max_rel_err_rho_ge_0p05: 0.4602786535
+    rho_threshold: 0.05
+  rationale_override: "Solver error is evaluated in log-space to reduce low-amplitude bias; rho is also reported with a thresholded relative error (rho>=0.05). This provides a more stable robustness view for strong power-law targets."
+
+P24:
+  title: Rho logquad + integer inverse solver
+  coverage: partial
+  primary_cases:
+    - m17-b2-p19-off352-drive050-repeat064
+    - m17-b2-p19-off352-drive050-repeat512
+    - m17-b2-p19-off352-drive200-repeat064
+    - m17-b2-p19-off352-drive200-repeat512
+    - m17-b2-p20-off352-drive100-repeat256
+    - m17-b2-p22-off352-drive050-repeat256
+    - m17-b2-p22-off352-drive100-repeat064
+    - m17-b2-p22-off352-drive100-repeat512
+    - m17-b2-p22-off352-drive200-repeat256
+  control_law:
+    source: outputs/p24-control-law/analysis/metrics_p24_control_law.json
+    sha1: 31582fe350754778fd9444cd0bdf402c33c3f983
+    rho_model_kind: logquad
+    rho_max_abs_log_err: 0.1552765260
+  solver:
+    source: outputs/p24-solver/analysis/metrics_p24_solver.json
+    sha1: 5c6e15704c661543cb6ef88a47653935a9ad204d
+    csv: outputs/p24-solver/analysis/p24_solver_table.csv
+    max_rel_err:
+      e_load: 5.1591355916e-16
+      u2: 7.2672706657e-02
+      rho: 1.6798089528e-01
+    max_abs_log_err:
+      u2: 0.0701533907
+      rho: 0.1552765275
+    max_rel_err_rho_ge_0p05: 0.1679808953
+    rho_threshold: 0.05
+    rho_mode: threshold
+  rationale_override: "Log-quad rho model reduces log-space error and grid-search repeat inversion stabilizes rho with threshold constraint; u2 error remains ~7% (model-limited)."
+
+P26:
+  title: Tail logquad upgrade (solver error reduction)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p19-off352-drive050-repeat064
+    - m17-b2-p19-off352-drive050-repeat512
+    - m17-b2-p19-off352-drive200-repeat064
+    - m17-b2-p19-off352-drive200-repeat512
+    - m17-b2-p20-off352-drive100-repeat256
+    - m17-b2-p22-off352-drive050-repeat256
+    - m17-b2-p22-off352-drive100-repeat064
+    - m17-b2-p22-off352-drive100-repeat512
+    - m17-b2-p22-off352-drive200-repeat256
+  control_law:
+    source: outputs/p26-control-law/analysis/metrics_p26_control_law.json
+    sha1: 025d6d9fa19b493f869f9006b6c138a9ec49c9a9
+    tail_model_kind: logquad
+    tail_max_abs_log_err: 0.0107382270
+    rho_max_abs_log_err: 0.1552765260
+  solver:
+    source: outputs/p26-solver/analysis/metrics_p26_solver.json
+    sha1: 7c641655d4e9c1d306d33202b173c39349dcbd29
+    csv: outputs/p26-solver/analysis/p26_solver_table.csv
+    max_rel_err:
+      e_load: 1.8056974781e-15
+      u2: 1.0680777657e-02
+      rho: 7.5592350796e-02
+    max_abs_log_err:
+      u2: 0.0107382266
+      rho: 0.0786021258
+    max_rel_err_rho_ge_0p05: 0.0755923508
+  rationale_override: "Tail model upgraded to log-quad in log(repeat), reducing u2 error to ~1.1% while preserving rho error (<8%) under grid-search inversion."
+
+P34:
+  title: OOS PASS (phase-aware repeat_pre + tail refit)
+  coverage: partial
+  primary_cases:
+    - m17-b2-p19-off352-drive050-repeat064
+    - m17-b2-p19-off352-drive050-repeat512
+    - m17-b2-p19-off352-drive200-repeat064
+    - m17-b2-p19-off352-drive200-repeat512
+    - m17-b2-p20-off352-drive100-repeat256
+    - m17-b2-p22-off352-drive050-repeat256
+    - m17-b2-p22-off352-drive100-repeat064
+    - m17-b2-p22-off352-drive100-repeat512
+    - m17-b2-p22-off352-drive200-repeat256
+    - m17-b2-p33-off352-drive100-repeat128
+  supplemental_cases:
+    - m17-b2-p27-drive150-repeat384
+    - m17-b2-p27-drive075-repeat128
+  control_law:
+    source: outputs/p34-control-law/analysis/metrics_p34_control_law.json
+    sha1: 1daa0b435f41c883e66acbb8853b9feb278720b7
+    tail_model_kind: logquad
+    tail_repeat_feature: repeat_pre
+    tail_max_abs_log_err: 0.0365514515
+  oos:
+    source: outputs/p34-oos/analysis/metrics_p34_oos.json
+    sha1: 6edc6cbe41e86bc1d802f870c9e19d2e3f27737c
+    oos_u2_errors:
+      drive150_repeat384: 0.000855
+      drive075_repeat128: 0.03937
+  rationale_override: "Phase-aware repeat_pre=min(repeat, off_step) plus low-repeat anchor (repeat=128) yields OOS u2 errors <5% on both P27 points (0.75/128 and 1.5/384). Rho remains evaluated via P32 classification in weak-compression regime (rho<0.05)."
+
+P35:
+  title: Rho strong/weak scoring semantics harden
+  coverage: partial
+  primary_cases:
+    - m17-b2-p19-off352-drive050-repeat064
+    - m17-b2-p19-off352-drive050-repeat512
+    - m17-b2-p19-off352-drive200-repeat064
+    - m17-b2-p19-off352-drive200-repeat512
+    - m17-b2-p20-off352-drive100-repeat256
+    - m17-b2-p22-off352-drive050-repeat256
+    - m17-b2-p22-off352-drive100-repeat064
+    - m17-b2-p22-off352-drive100-repeat512
+    - m17-b2-p22-off352-drive200-repeat256
+    - m17-b2-p33-off352-drive100-repeat128
+  supplemental_cases:
+    - m17-b2-p27-drive150-repeat384
+    - m17-b2-p27-drive075-repeat128
+  classifier:
+    source: outputs/p35-rho-clf/analysis/metrics_p35_rho_clf.json
+    sha1: 381e5f9caa48b66935e0b06f939832ea0db83462
+    threshold: 0.05
+    auc: 1.0
+    accuracy: 1.0
+    n_samples: 10
+    sample_small: true
+  oos:
+    source: outputs/p35-oos/analysis/metrics_p35_oos.json
+    sha1: 43d8ac9b5196abcf4a90c3c14ba35d9194f7792f
+    rho_classification:
+      drive150_repeat384: true
+      drive075_repeat128: true
+    rel_err_rho_strong:
+      drive150_repeat384: 0.09646
+  rationale_override: "Adds rho strong/weak classification (rho>=0.05) to scoring; weak-compression OOS point is evaluated by classification only, while strong points use relative error."
+
+D1:
+  title: Magnetic load engineering interface (coil force/pressure proxies)
+  coverage: full
+  primary_cases:
+    - m26-d2-magnetic-load-interface
+  supplemental_cases:
+    - m26-p2-circuit-load-integration
+  rationale_override: "Exports engineering-facing load proxies (magnetic pressure, force proxy, impulse, dPhi/dt, recapture efficiency) from circuit-coupled coil diagnostics and is now consumed by the regular circuit integration gate."
+
+ML1:
+  title: ML surrogate for electron transport closure
+  coverage: full
+  primary_cases:
+    - m26-ml1-transport-surrogate
+  rationale_override: "Reproducible surrogate artifact now includes train/OOS evaluation, model and inference hashes, and explicit nearest-neighbor fallback when features leave training bounds."
+
+D2:
+  title: Helion P0/P1 readiness audit automation
+  coverage: full
+  primary_cases:
+    - m26-d3-helion-readiness-audit
+  rationale_override: "Automated P0/P1 dimension scoring and backlog generation from evidence mapping and PASS/FAIL artifacts."
+
+H0:
+  title: Helion full requirements gate (lifecycle + stability + keV/Q_eng)
+  coverage: full
+  primary_cases:
+    - m27-d1-helion-full-requirements-gate
+  supplemental_cases:
+    - m26-d3-helion-readiness-audit
+  rationale_override: "Full gate consolidates lifecycle chain, micro-instability timing guidance, stability boundary proxies, keV compression/Q_eng engineering KPIs, circuit-conductor coupling, and production workflow checks in one auditable PASS artifact."
+
+H1:
+  title: Helion usage scenarios gate (design/shot/post-shot/V&V/interface/ML)
+  coverage: full
+  primary_cases:
+    - m27-d2-helion-usage-scenarios-gate
+  supplemental_cases:
+    - m27-d1-helion-full-requirements-gate
+  rationale_override: "Dedicated usage-scenarios gate verifies the six engineering workflows Helion emphasizes: design accelerator, shot planning sweeps, post-shot reconstruction, V&V loop, engineering interface outputs, and ML surrogate closure."
+
+H2:
+  title: Helion strict public-equivalence gate (non-proxy stability/EM + runtime stack)
+  coverage: full
+  primary_cases:
+    - m28-d1-helion-internal-parity-gate
+  supplemental_cases:
+    - m28-s1-runtime-stack-evidence
+    - m28-s2-stability-nonproxy-gate
+    - m28-s3-em-diffusion-nonproxy-gate
+  rationale_override: "Adds strict public evidence beyond H0/H1: runtime-stack provenance, direct modal stability diagnostics (M1RHO/M1MOM), and solver-level diffusion/resistive scaling with conductor/circuit engineering closure."
+
+H3:
+  title: Helion internal-only parity blocker audit
+  coverage: partial
+  primary_cases:
+    - m28-d1-helion-internal-parity-gate
+  rationale_override: "Separates strict public-equivalence PASS from internal-only blockers (GPU runtime proof and private shot/hardware calibration datasets) so the remaining delta is explicit and auditable. Internal-only bindings are now manifest-driven (`evidence/internal/helion_internal_parity_manifest.json`) with hash-checked artifacts."
+
+H4:
+  title: Helion-style high-fidelity 3D animation suite
+  coverage: full
+  primary_cases:
+    - m29-d1-hf3d-suite-gate
+  supplemental_cases:
+    - m29-d2-hf3d-demo-pack
+    - m29-hf3d-1-merge-compression-recapture
+    - m29-hf3d-2-formation-microinstability
+    - m29-hf3d-3-engineering-diffusion-load
+  rationale_override: "Adds explicit 3D visual deliverables for (1) merge/compression + recapture, (2) formation micro-instability/flux-loss narrative, and (3) engineering eddy-diffusion-load acceptance, plus a reproducible demo pack index/playback artifact with direct evidence links."

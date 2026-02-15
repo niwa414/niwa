@@ -1,0 +1,54 @@
+{
+  "id": "m7-h5-robustness-sweep",
+  "description": "H5 robustness sweep for tilt_seed_y_offset_amp (+/-10%).",
+  "engine": "pipeline",
+  "gate_class": "h5_robustness_sweep",
+  "physical_validity": "mhd_seeded_hybrid_merge_tilt_gamma_robustness",
+  "inputs": [
+    "inputs/variants.json"
+  ],
+  "run": [
+    {
+      "name": "run-h5-robustness-variants",
+      "cmd": [
+        "{python}",
+        "tools/run_h5_robustness_sweep.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--stage",
+        "all"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-h5-robustness-sweep",
+      "cmd": [
+        "{python}",
+        "tools/analyze_h5_robustness_sweep.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/variant_summary.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "sweep_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/variant_summary.json",
+    "{output_plots}/gamma_r2_compare.png",
+    "{output_plots}/tilt_amp_post_merge_compare.png"
+  ]
+}

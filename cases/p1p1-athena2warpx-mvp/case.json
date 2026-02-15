@@ -1,0 +1,98 @@
+{
+  "id": "p1p1-athena2warpx-mvp",
+  "description": "P1.1 Athena++ -> WarpX one-way coupling MVP (external field + fluid seed).",
+  "engine": "pipeline",
+  "gate_class": "p1p1_athena2warpx",
+  "physical_validity": "p1p1_oneway_coupling",
+  "inputs": [
+    "inputs/coupling.json",
+    "inputs/warpx_args.json"
+  ],
+  "run": [
+    {
+      "name": "export-athena-fields",
+      "cmd": [
+        "{python}",
+        "tools/export_athena_fields_for_warpx.py",
+        "--config",
+        "{case_dir}/inputs/coupling.json",
+        "--out-dir",
+        "{output_root}/coupling"
+      ]
+    },
+    {
+      "name": "run-warpx-external-field",
+      "cmd": [
+        "{python}",
+        "tools/run_warpx_external_field.py",
+        "--warpx-args",
+        "{case_dir}/inputs/warpx_args.json",
+        "--opmd-fluid",
+        "{output_root}/coupling/fluid_init.h5",
+        "--opmd-b",
+        "{output_root}/coupling/B_ext.h5",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-u2-hist",
+      "cmd": [
+        "{python}",
+        "tools/analyze_u2_hist.py",
+        "--hist",
+        "{output_raw}/run/diags/reducedfiles/U2Hist.txt",
+        "--warpx-args",
+        "{case_dir}/inputs/warpx_args.json",
+        "--metrics-out",
+        "{output_analysis}/metrics_u2hist.json"
+      ]
+    },
+    {
+      "name": "analyze-p1p1-warpx-kpi",
+      "cmd": [
+        "{python}",
+        "tools/analyze_p1p1_warpx_kpi.py",
+        "--u2hist",
+        "{output_analysis}/metrics_u2hist.json",
+        "--coupling-meta",
+        "{output_root}/coupling/coupling_meta.json",
+        "--warpx-meta-dir",
+        "{output_raw}/run",
+        "--baseline-drift",
+        "0.33",
+        "--baseline-shift",
+        "0.22",
+        "--metrics-out",
+        "{output_analysis}/metrics.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "warpx_ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "warpx_kpi_energy_tail",
+      "op": "!=",
+      "value": null
+    },
+    {
+      "metric": "warpx_kpi_anisotropy",
+      "op": "!=",
+      "value": null
+    }
+  ],
+  "artifacts": [
+    "{output_root}/coupling/coupling_meta.json",
+    "{output_analysis}/metrics_u2hist.json",
+    "{output_analysis}/metrics.json"
+  ]
+}

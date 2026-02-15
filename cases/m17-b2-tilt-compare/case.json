@@ -1,0 +1,82 @@
+{
+  "id": "m17-b2-tilt-compare",
+  "description": "B2.1 tilt on/off comparison (rotseed, l1debug).",
+  "engine": "pipeline",
+  "gate_class": "b2_tilt_compare",
+  "physical_validity": "b2_tilt_on_off_compare",
+  "inputs": [
+    "inputs/variants.json"
+  ],
+  "run": [
+    {
+      "name": "run-b2-tilt-on-off",
+      "cmd": [
+        "{python}",
+        "tools/run_b2_tilt_compare.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--stage",
+        "all"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b2-tilt-compare",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b2_tilt_compare.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/compare_summary.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "compare_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "thresholds_layers": [
+    {
+      "name": "layer1",
+      "thresholds": [
+        {
+          "metric": "ran_to_completion_on",
+          "op": "==",
+          "value": true
+        },
+        {
+          "metric": "ran_to_completion_off",
+          "op": "==",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "layer2",
+      "thresholds": [
+        {
+          "metric": "t_cross_on_exists",
+          "op": "==",
+          "value": true
+        },
+        {
+          "metric": "t_cross_pass",
+          "op": "==",
+          "value": true
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/compare_summary.json"
+  ]
+}

@@ -1,0 +1,90 @@
+<comment>
+  Compression gate: EMF-driven external B with mirror profile plus moving-wall piston.
+  Uses frc_merge pgen with a single plasmoid (sep=0) and no inflow.
+</comment>
+
+<job>
+  problem_id   = bext_emf_compress_gate
+  maxout       = 30
+</job>
+
+<mesh>
+  ix1_bc = user
+  ox1_bc = user
+  ix2_bc = reflecting
+  ox2_bc = reflecting
+  ix3_bc = periodic
+  ox3_bc = periodic
+
+  x1min = -0.25
+  x1max =  0.25
+  x2min = 0.0
+  x2max = 0.25
+  x3min = 0.0
+  x3max = 0.1
+
+  nx1 = 64
+  nx2 = 64
+  nx3 = 1
+</mesh>
+
+<time>
+  cfl_number = 0.05
+  nlim       = -1
+  tlim       = 0.2
+</time>
+
+<output1>
+  file_type = vtk
+  dt        = 1.0e-2
+  variable  = prim
+</output1>
+
+<output2>
+  file_type = hst
+  dt        = 5.0e-3
+</output2>
+
+<problem>
+  rho0                 = 1.0
+  p0                   = 0.1
+  rho_core             = 2.0
+  p_core               = 0.2
+  plasmoid_radius      = 0.1
+  plasmoid_sep         = 0.0
+  b_core               = 1.0
+  v_inflow             = 0.0
+  v_profile_radius     = 0.1
+
+  b_bias                   = 0.0
+  b_ext_profile            = mirror
+  mirror_ratio             = 2.0
+  mirror_center_x1         = 0.0
+  mirror_half_length       = 0.25
+  b_mirror_delta_waveform  = cases/m1-a2-compress-gate/inputs/belova_b2_mirror_ramp.csv
+  b_mirror_delta_column    = 1
+  b_mirror_delta_scale     = 0.4
+
+  apply_bext_emf           = true
+  bext_emf_disable_bc      = true
+  bext_emf_add_energy      = true
+
+  piston_bc                = true
+  piston_use_depth         = true
+  piston_depth_max         = 0.1
+  piston_waveform          = cases/m1-a2-compress-gate/inputs/belova_b2_mirror_ramp.csv
+  piston_waveform_column   = 1
+  piston_waveform_scale    = 1.0
+  piston_waveform_bias     = 0.0
+  piston_waveform_tshift   = 0.0
+</problem>
+
+<hydro>
+  gamma = 5.0/3.0
+  reconstruction = plm
+  riemann_solver = hlld
+</hydro>
+
+<field>
+  integration = ct
+</field>

@@ -1,0 +1,21 @@
+{
+  "nx": 32,
+  "ny": 32,
+  "nz": 64,
+  "x_max": 0.1,
+  "y_max": 0.1,
+  "z_max": 0.2,
+  "ppc": 1,
+  "blob_sigma": 0.04,
+  "blob_center": [0.02, 0.0, 0.0],
+  "drift_beta": [0.16, 0.0, 0.0],
+  "particle_weight": 1.0e-8,
+  "max_steps": 20,
+  "dt": 5.0e-12,
+  "diag_period": 4,
+  "monitor_interval": 1,
+  "drop_threshold": 100,
+  "cfl": 0.9,
+  "seed": 42,
+  "add_electrons": false
+}

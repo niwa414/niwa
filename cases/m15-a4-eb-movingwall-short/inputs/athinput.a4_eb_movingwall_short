@@ -1,0 +1,89 @@
+<comment>
+  A4.2 EB + moving-wall short window: tapered cylindrical wall profile (stair-step mask).
+  Purpose: verify wall masking + leak diagnostics with a short moving-wall drive.
+</comment>
+
+<job>
+  problem_id   = frc_merge
+  maxout       = 20
+</job>
+
+<mesh>
+  ix1_bc = user
+  ox1_bc = user
+  ix2_bc = reflecting
+  ox2_bc = reflecting
+  ix3_bc = periodic
+  ox3_bc = periodic
+
+  x1min = -2.0
+  x1max =  2.0
+  x2min = -1.0
+  x2max =  1.0
+  x3min = -1.0
+  x3max =  1.0
+
+  nx1 = 64
+  nx2 = 32
+  nx3 = 16
+</mesh>
+
+<time>
+  cfl_number = 0.2
+  nlim       = -1
+  tlim       = 1.4
+</time>
+
+<output1>
+  file_type = vtk
+  dt        = 1.0
+  variable  = prim
+</output1>
+
+<output2>
+  file_type = hst
+  dt        = 0.05
+</output2>
+
+<problem>
+  rho0                 = 0.05
+  p0                   = 0.02
+  rho_core             = 1.0
+  p_core               = 0.2
+  plasmoid_radius      = 0.4
+  plasmoid_sep         = 1.2
+  b_core               = 0.5
+  b_guide              = 0.0
+  v_inflow             = 0.1
+  v_profile_radius     = 0.6
+
+  axisym_vacuum_outer  = false
+  mass_budget_history  = true
+
+  cyl_wall             = true
+  cyl_wall_rmax         = 0.9
+  cyl_wall_profile      = linear
+  cyl_wall_x1_min        = -1.0
+  cyl_wall_x1_max        = 1.0
+  cyl_wall_r0            = 0.9
+  cyl_wall_r1            = 0.77
+
+  piston_bc                = true
+  piston_use_depth         = true
+  piston_depth_max         = 0.1
+  piston_waveform          = cases/m1-a2-compress-gate/inputs/belova_b2_mirror_ramp.csv
+  piston_waveform_column   = 1
+  piston_waveform_scale    = 0.3
+  piston_waveform_bias     = 0.0
+  piston_waveform_tshift   = 0.0
+</problem>
+
+<hydro>
+  gamma = 5.0/3.0
+  reconstruction = plm
+  riemann_solver = hlld
+</hydro>
+
+<field>
+  integration = ct
+</field>

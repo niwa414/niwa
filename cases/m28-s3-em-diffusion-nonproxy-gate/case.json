@@ -1,0 +1,97 @@
+{
+  "id": "m28-s3-em-diffusion-nonproxy-gate",
+  "description": "Non-proxy EM diffusion gate: explicit diffusion activity, etaJ2 resistive scaling, and conductor/circuit engineering closure.",
+  "engine": "pipeline",
+  "gate_class": "em_diffusion_nonproxy",
+  "physical_validity": "solver_level_diffusion",
+  "inputs": [
+    "../../outputs/m26-a4-conductor-load-gate/analysis/PASSFAIL.json",
+    "../../outputs/m26-d2-magnetic-load-interface/analysis/PASSFAIL.json",
+    "../../outputs/m26-p2-circuit-load-integration/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-p10-diff000/analysis/metrics_diffusion.json",
+    "../../outputs/m17-b2-p10-diff100/analysis/metrics_diffusion.json",
+    "../../outputs/m17-b2-p10-diff400/analysis/metrics_diffusion.json",
+    "../../outputs/m11-b3-eta-sweep-0/analysis/metrics.json",
+    "../../outputs/m11-b3-eta-sweep-1/analysis/metrics.json",
+    "../../outputs/m11-b3-eta-sweep-2/analysis/metrics.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-em-diffusion-nonproxy",
+      "cmd": [
+        "{python}",
+        "tools/analyze_em_diffusion_nonproxy.py",
+        "--conductor-case",
+        "m26-a4-conductor-load-gate",
+        "--load-case",
+        "m26-d2-magnetic-load-interface",
+        "--circuit-case",
+        "m26-p2-circuit-load-integration",
+        "--diff0",
+        "outputs/m17-b2-p10-diff000/analysis/metrics_diffusion.json",
+        "--diff1",
+        "outputs/m17-b2-p10-diff100/analysis/metrics_diffusion.json",
+        "--diff2",
+        "outputs/m17-b2-p10-diff400/analysis/metrics_diffusion.json",
+        "--eta0",
+        "outputs/m11-b3-eta-sweep-0/analysis/metrics.json",
+        "--eta1",
+        "outputs/m11-b3-eta-sweep-1/analysis/metrics.json",
+        "--eta2",
+        "outputs/m11-b3-eta-sweep-2/analysis/metrics.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/em_diffusion_nonproxy.md",
+        "--matrix",
+        "{output_analysis}/em_diffusion_checks.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "diffusion_activation_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "etaj2_scaling_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "etaJ2_gain_2_over_1",
+      "op": ">=",
+      "value": 1.5
+    },
+    {
+      "metric": "conductor_interface_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "circuit_closed_loop_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "em_diffusion_nonproxy_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/em_diffusion_nonproxy.md",
+    "{output_analysis}/em_diffusion_checks.csv"
+  ]
+}

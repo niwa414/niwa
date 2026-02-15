@@ -1,0 +1,33 @@
+# OS / editor
+.DS_Store
+.vscode/
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Local runtime artifacts
+Backtrace.*
+*.log
+AGENTS.md
+
+# Large local outputs and generated data
+outputs/
+warpx_used_inputs
+cases/helion-live-tilt-tradestudy/bo_generated/
+
+# Vendored third-party trees (bring your own checkout)
+athena-24.0/
+pic-warpx-25.11/
+
+# Local/private evidence manifests
+evidence/internal/helion_internal_parity_manifest.json
+
+# Environment files
+.env
+.venv/
+venv/

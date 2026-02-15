@@ -1,0 +1,22 @@
+{
+  "init_mode": "opmd_double_seed",
+  "opmd_fluid_path": "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/fluid_init.h5",
+  "opmd_b_path": "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/B_ext.h5",
+  "max_steps": 128,
+  "dt": 5e-12,
+  "diag_period": 4,
+  "enable_field_diag": false,
+  "enable_u2_hist_custom": false,
+  "enable_u2_hist_diag": true,
+  "enable_u2_stats_diag": false,
+  "u2_hist_bin_number": 4096,
+  "u2_hist_bin_min": 0.0,
+  "u2_hist_bin_max": 1.0e14,
+  "u2_hist_interval": 4,
+  "enable_inject": false,
+  "enable_velocity_reset": false,
+  "enable_energy_drag": false,
+  "enable_energy_diffusion": false,
+  "driveAmp_scale": 1.0,
+  "drive_envelope_enable": false
+}

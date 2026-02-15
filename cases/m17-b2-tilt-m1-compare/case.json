@@ -1,0 +1,43 @@
+{
+  "id": "m17-b2-tilt-m1-compare",
+  "description": "B2.3 m1 diagnostics compare (rho_cos eps002 vs eps000, m1v).",
+  "engine": "pipeline",
+  "gate_class": "b2_tilt_m1_compare",
+  "physical_validity": "b2_tilt_m1_on_off_compare",
+  "inputs": [
+    "inputs/variants.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": ["true"]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b2-tilt-m1-compare",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b2_tilt_m1_compare.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/compare_summary.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "compare_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/compare_summary.json"
+  ]
+}

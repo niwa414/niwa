@@ -1,0 +1,36 @@
+{
+  "name": "helion-live-tilt-tradestudy",
+  "description": "Slurm orchestration plan for Helion-style single-knob 3-case trade study.",
+  "max_retries": 1,
+  "slurm": {
+    "partition": "gpu",
+    "time": "12:00:00",
+    "cpus_per_task": 8,
+    "gpus": 1,
+    "mem": "64G",
+    "extra_args": []
+  },
+  "cases": [
+    {
+      "key": "baseline",
+      "role": "baseline",
+      "case": "cases/helion-live-tilt-tradestudy/baseline/case.json",
+      "stage": "all",
+      "retries": 1
+    },
+    {
+      "key": "knob-minus",
+      "role": "knob_minus",
+      "case": "cases/helion-live-tilt-tradestudy/knob_minus/case.json",
+      "stage": "all",
+      "retries": 1
+    },
+    {
+      "key": "knob-plus",
+      "role": "knob_plus",
+      "case": "cases/helion-live-tilt-tradestudy/knob_plus/case.json",
+      "stage": "all",
+      "retries": 1
+    }
+  ]
+}

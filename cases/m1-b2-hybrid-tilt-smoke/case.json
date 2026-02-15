@@ -1,0 +1,94 @@
+{
+  "id": "m1-b2-hybrid-tilt-smoke",
+  "description": "Hybrid-PIC tilt smoke in WarpX RZ (m=1) using synthetic plasma.",
+  "case_status": "archived",
+  "case_notes": "Hybrid-PIC Ohm solver in RZ supports m=0 only; tilt (m=1) requires 3D Hybrid to match Helion.",
+  "engine": "warpx",
+  "inputs": [
+    "inputs/warpx_args.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx",
+      "timeout_s": 1200,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-rz/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--run-tag",
+        "m1-b2-hybrid-tilt-smoke"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-tilt",
+      "cmd": [
+        "{python}",
+        "tools/analyze_warpx_tilt_case.py",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--metadata",
+        "{output_raw}/run/warpx_run_m1-b2-hybrid-tilt-smoke.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--csv",
+        "{output_analysis}/mode_spectrum.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "num_outputs",
+      "op": ">=",
+      "value": 5
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "drop_breach",
+      "op": "==",
+      "value": false
+    },
+    {
+      "metric": "tilt_amp_ratio",
+      "op": ">=",
+      "value": 1.5
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/warpx_run_m1-b2-hybrid-tilt-smoke.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/mode_spectrum.csv",
+    "{output_plots}/tilt_m1_amplitude_vs_time.png",
+    "{output_plots}/energy_budget_vs_time.png",
+    "{output_plots}/density_snapshot.png"
+  ]
+}

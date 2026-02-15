@@ -1,0 +1,81 @@
+{
+  "id": "m20-b2-3d-driver-stage2-gate80-dense",
+  "description": "B2 3D driver stage2 Gate80 dense suite (strict closure: GS->3D + EMF + moving-wall + fit gate).",
+  "engine": "pipeline",
+  "gate_class": "b2_3d_driver_stage2",
+  "physical_validity": "limited",
+  "inputs": [
+    "../../athena-24.0/inputs/mhd/athinput.belova_b2_gs_emf_mwall3d_gate80_dense",
+    "../../athena-24.0/inputs/mhd/athinput.belova_b2_gs_emf_mwall80_smooth",
+    "../../scenes/belova_b2_mirror_ramp_smooth.csv"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-stage2-suite",
+      "timeout_s": 10800,
+      "cmd": [
+        "{python}",
+        "tools/run_b2_3d_driver_stage.py",
+        "--stage",
+        "3d2",
+        "--output-root",
+        "{output_raw}/run",
+        "--athena-bin",
+        "athena-24.0/bin/athena",
+        "--stage-input",
+        "athena-24.0/inputs/mhd/athinput.belova_b2_gs_emf_mwall3d_gate80_dense",
+        "--gs-athinput",
+        "athena-24.0/inputs/mhd/athinput.belova_b2_gs_emf_mwall80_smooth",
+        "--waveform",
+        "scenes/belova_b2_mirror_ramp_smooth.csv"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-stage2-suite",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b2_3d_driver_stage.py",
+        "--summary",
+        "{output_raw}/run/stage_summary.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--details",
+        "{output_analysis}/stage2_details.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "init_h5_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "stage_transition_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "stage_strict_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "known_gaps": [],
+  "artifacts": [
+    "{output_raw}/run/stage_summary.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/stage2_details.json"
+  ]
+}

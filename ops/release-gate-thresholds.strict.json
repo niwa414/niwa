@@ -1,0 +1,30 @@
+{
+  "require_all_jobs_pass": true,
+  "aggregate": {
+    "min_pass_cases": 3
+  },
+  "per_case": {
+    "require_ran_to_completion": true,
+    "require_no_nan_in_metrics": true,
+    "require_merge_time_exists": true,
+    "require_energy_accounting_ok": true,
+    "compression_ratio_min": 1.001,
+    "tilt_amp_max_max": 0.05,
+    "energy_residual_rel_max": 1e-6
+  },
+  "internal_parity": {
+    "metrics_path": "outputs/m28-d1-helion-internal-parity-gate/analysis/metrics.json",
+    "require_internal_parity_claimable": true,
+    "require_zero_internal_gaps": true,
+    "required_true_fields": [
+      "strict_public_stack_pass",
+      "runtime_stack_pass",
+      "full_requirements_pass",
+      "usage_scenarios_pass",
+      "gpu_runtime_proven",
+      "private_shot_dataset_bound",
+      "private_hardware_model_bound"
+    ],
+    "required_false_fields": []
+  }
+}

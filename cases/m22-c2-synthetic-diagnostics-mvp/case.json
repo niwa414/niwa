@@ -1,0 +1,77 @@
+{
+  "id": "m22-c2-synthetic-diagnostics-mvp",
+  "description": "C2 synthetic diagnostics MVP from a historical Hybrid run (B-dot + interferometer proxy).",
+  "engine": "pipeline",
+  "gate_class": "c2_synthetic_diagnostics_mvp",
+  "physical_validity": "diagnostic_proxy",
+  "inputs": [
+    "../../outputs/m17-b2-formation0d-driveN032/raw/inputs/case.json",
+    "../../outputs/m17-b2-formation0d-driveN032/raw/inputs/inputs/warpx_args.json",
+    "../../outputs/m17-b2-formation0d-driveN032/raw/run/diag/reducedfiles/COIL.txt",
+    "../../outputs/m17-b2-formation0d-driveN032/raw/run/diags/reducedfiles/PNUM.txt"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "generate-synthetic-signals",
+      "cmd": [
+        "{python}",
+        "tools/generate_synthetic_diagnostics.py",
+        "--run-dir",
+        "outputs/m17-b2-formation0d-driveN032/raw/run",
+        "--out-dir",
+        "{output_analysis}/synthetic",
+        "--metrics",
+        "{output_analysis}/metrics.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "synthetic_dir_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "bdot_signal_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "interferometer_signal_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "bdot_points",
+      "op": ">=",
+      "value": 24
+    },
+    {
+      "metric": "interferometer_points",
+      "op": ">=",
+      "value": 64
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/synthetic/signal_bdot.csv",
+    "{output_analysis}/synthetic/signal_flux.csv",
+    "{output_analysis}/synthetic/signal_interferometer.csv"
+  ]
+}

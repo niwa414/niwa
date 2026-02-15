@@ -1,0 +1,79 @@
+# Belova B1: two FRCs merge in cylinder, no compression (hybrid vs MHD contrast)
+# Purpose: replicate arXiv:2501.03425 merging cases without mirror compression; benchmark Hall/hybrid effects.
+meta:
+  id: belova_b1_merge
+  description: >
+    Axisymmetric cylinder; two mirrored FRC equilibria launched toward each other.
+    Baseline beta_s~0.15 merges cleanly; beta_s~0.30 tends to bounce/split.
+  references:
+    - Belova2025_arXiv_2501_03425
+geometry:
+  type: cylinder
+  r_max: 0.25          # m (tunable; paper uses ~0.2–0.25 m scale)
+  z_span: 0.50         # m total length
+  wall_bc: conducting
+  mirror:
+    bz_mirror: 0.10    # T mild end mirrors; set to 0 to disable
+    extent: 0.05       # m
+fields:
+  bias_Bz: 0.05        # T guide/bias field
+  coil_waveform_csv: null   # static mirrors/bias for B1 (no compression waveform)
+mesh:
+  athena:
+    nr: 192
+    nz: 384
+    cfl: 0.4
+    vtk_dt: 1.5e-7
+    hst_dt: 7.5e-8
+  warpx:
+    nr: 128
+    nz: 256
+    dt: 4.0e-12
+    diag_period: 10
+    n_azimuthal_modes: 1    # increase to 2 for m=1 EM-only tilt checks (no external field load)
+plasma:
+  species:
+    - name: D
+      A: 2.0
+      Z: 1.0
+      n0: 2.0e19      # m^-3 core peak per FRC
+      Te0: 80.0       # eV
+      Ti0: 120.0      # eV
+  frc_pair:
+    beta_s: 0.15      # separatrix beta for baseline clean merge; try 0.30 for bounce
+    S_star: 3.0       # kinetic parameter (set consistent with equilibrium solver)
+    separation: 0.20  # m initial centroid spacing
+    length: 0.12      # m half-length
+    radius: 0.06      # m separatrix radius
+    vz: 1.5e5         # m/s inward drift; zero to test mirror-driven approach
+    tilt_eps: 0.0
+transport:
+  model: resistive_mhd
+  eta_const: 5.0e-6   # Ohm-m baseline; sweep to match reconnection rate
+  hall_term: true     # toggle to compare with Hall-less MHD
+hybrid:
+  enable: true
+  n_floor_scale: 0.05
+  substeps: 1
+  eta: 0.0
+  gamma: 1.6666666667
+export:
+  r_min: 0.0
+  r_max: 0.25
+  z_min: -0.25
+  z_max: 0.25
+  nr: 128
+  nz: 256
+diagnostics:
+  athena:
+    vtk_stride: 1
+    hst: true
+  warpx:
+    monitor_interval: 10
+    drop_threshold: 500
+    mode_metrics: [rho, Bz]
+  derived:
+    - merge_success        # boolean/flag from z-separation collapse
+    - doublet_detection    # detect dual cores post-merge
+    - reconnection_rate    # from Bz contour evolution
+    - hall_quadrupole      # check B pattern in hybrid vs MHD

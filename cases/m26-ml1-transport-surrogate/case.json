@@ -1,0 +1,117 @@
+{
+  "id": "m26-ml1-transport-surrogate",
+  "description": "ML1 surrogate artifact for transport proxy metrics with fallback and OOS checks.",
+  "engine": "pipeline",
+  "gate_class": "ml1_transport_surrogate",
+  "physical_validity": "ml_proxy",
+  "inputs": [
+    "../../outputs/m17-b2-p19-off352-drive050-repeat064/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p19-off352-drive050-repeat512/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p19-off352-drive200-repeat064/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p19-off352-drive200-repeat512/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p20-off352-drive100-repeat256/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p22-off352-drive050-repeat256/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p22-off352-drive100-repeat064/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p22-off352-drive100-repeat512/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p22-off352-drive200-repeat256/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p33-off352-drive100-repeat128/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p27-drive075-repeat128/analysis/metrics_pulse_kpi.json",
+    "../../outputs/m17-b2-p27-drive150-repeat384/analysis/metrics_pulse_kpi.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-ml1-transport-surrogate",
+      "cmd": [
+        "{python}",
+        "tools/analyze_ml1_transport_surrogate.py",
+        "--train-cases",
+        "m17-b2-p19-off352-drive050-repeat064,m17-b2-p19-off352-drive050-repeat512,m17-b2-p19-off352-drive200-repeat064,m17-b2-p19-off352-drive200-repeat512,m17-b2-p20-off352-drive100-repeat256,m17-b2-p22-off352-drive050-repeat256,m17-b2-p22-off352-drive100-repeat064,m17-b2-p22-off352-drive100-repeat512,m17-b2-p22-off352-drive200-repeat256,m17-b2-p33-off352-drive100-repeat128",
+        "--oos-cases",
+        "m17-b2-p27-drive075-repeat128,m17-b2-p27-drive150-repeat384",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--model-out",
+        "{output_analysis}/ml1_model.json",
+        "--inference-out",
+        "{output_analysis}/ml1_inference_config.json",
+        "--report",
+        "{output_analysis}/ml1_report.md",
+        "--predictions",
+        "{output_analysis}/ml1_oos_predictions.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "training_samples",
+      "op": ">=",
+      "value": 8
+    },
+    {
+      "metric": "u2_loocv_rel_err_max",
+      "op": "<=",
+      "value": 0.1
+    },
+    {
+      "metric": "e_load_loocv_rel_err_max",
+      "op": "<=",
+      "value": 0.001
+    },
+    {
+      "metric": "rho_cls_loocv_acc",
+      "op": ">=",
+      "value": 0.85
+    },
+    {
+      "metric": "oos_u2_rel_err_max",
+      "op": "<=",
+      "value": 0.1
+    },
+    {
+      "metric": "oos_rho_cls_acc",
+      "op": ">=",
+      "value": 0.85
+    },
+    {
+      "metric": "model_artifact_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "inference_artifact_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "fallback_policy_defined",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "fallback_simulated_triggered",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "surrogate_ready",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/ml1_model.json",
+    "{output_analysis}/ml1_inference_config.json",
+    "{output_analysis}/ml1_report.md",
+    "{output_analysis}/ml1_oos_predictions.csv"
+  ]
+}

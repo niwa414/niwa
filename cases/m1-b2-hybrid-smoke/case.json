@@ -1,0 +1,91 @@
+{
+  "id": "m1-b2-hybrid-smoke",
+  "description": "Hybrid-PIC smoke in WarpX RZ (m=0) using fluid-init.",
+  "engine": "warpx",
+  "inputs": [
+    "inputs/warpx_args.json",
+    "inputs/fluid_init_hall_frc.h5",
+    "inputs/B_ext_hall_frc.h5"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx",
+      "timeout_s": 1200,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-rz/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--run-tag",
+        "m1-b2-hybrid-smoke"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-hybrid",
+      "cmd": [
+        "{python}",
+        "tools/analyze_warpx_tilt_case.py",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--metadata",
+        "{output_raw}/run/warpx_run_m1-b2-hybrid-smoke.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--csv",
+        "{output_analysis}/mode_spectrum.csv",
+        "--max-mode",
+        "0",
+        "--skip-amp"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "num_outputs",
+      "op": ">=",
+      "value": 5
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "drop_breach",
+      "op": "==",
+      "value": false
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/warpx_run_m1-b2-hybrid-smoke.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/mode_spectrum.csv",
+    "{output_plots}/energy_budget_vs_time.png",
+    "{output_plots}/density_snapshot.png"
+  ]
+}

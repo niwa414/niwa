@@ -1,0 +1,87 @@
+{
+  "id": "m28-s1-runtime-stack-evidence",
+  "description": "Runtime-stack evidence gate from existing WarpX/AMReX logs and metadata (device runtime knobs + progress telemetry).",
+  "engine": "pipeline",
+  "gate_class": "runtime_stack_evidence",
+  "physical_validity": "runtime_provenance",
+  "inputs": [
+    "../../outputs/m17-b2-fasttail-driveAmp050/logs/run_run-warpx-3d-hybrid.log",
+    "../../outputs/m2-b2-hybrid-3d-smoke/logs/run_run-warpx-3d-hybrid.log",
+    "../../outputs/m1-b2-hybrid-smoke/logs/run_run-warpx.log",
+    "../../outputs/m2-b2-hybrid-3d-smoke/raw/run/warpx_run_m2-b2-hybrid-3d-smoke.json",
+    "../../outputs/m1-b2-hybrid-smoke/raw/run/warpx_run_m1-b2-hybrid-smoke.json",
+    "../../pic-warpx-25.11/build-3d/CMakeCache.txt",
+    "../../pic-warpx-25.11/build-rz/CMakeCache.txt"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-runtime-stack-evidence",
+      "cmd": [
+        "{python}",
+        "tools/analyze_runtime_stack_evidence.py",
+        "--logs",
+        "outputs/m17-b2-fasttail-driveAmp050/logs/run_run-warpx-3d-hybrid.log",
+        "outputs/m2-b2-hybrid-3d-smoke/logs/run_run-warpx-3d-hybrid.log",
+        "outputs/m1-b2-hybrid-smoke/logs/run_run-warpx.log",
+        "--metadata",
+        "outputs/m2-b2-hybrid-3d-smoke/raw/run/warpx_run_m2-b2-hybrid-3d-smoke.json",
+        "outputs/m1-b2-hybrid-smoke/raw/run/warpx_run_m1-b2-hybrid-smoke.json",
+        "--build-caches",
+        "pic-warpx-25.11/build-3d/CMakeCache.txt",
+        "pic-warpx-25.11/build-rz/CMakeCache.txt",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/runtime_stack_evidence.md",
+        "--matrix",
+        "{output_analysis}/runtime_stack_logs.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "logs_scanned",
+      "op": ">=",
+      "value": 2
+    },
+    {
+      "metric": "amrex_stack_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "runtime_progress_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "device_runtime_knobs_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "gpu_aware_field_seen",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "runtime_stack_evidence_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/runtime_stack_evidence.md",
+    "{output_analysis}/runtime_stack_logs.csv"
+  ]
+}

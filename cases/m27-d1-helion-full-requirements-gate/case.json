@@ -1,0 +1,163 @@
+{
+  "id": "m27-d1-helion-full-requirements-gate",
+  "description": "Helion full requirements gate: lifecycle + stability + compression-keV + recapture + Q_eng + engineering workflow.",
+  "engine": "pipeline",
+  "gate_class": "helion_full_requirements",
+  "physical_validity": "full_stack_proxy",
+  "inputs": [
+    "../../outputs/m13-a2-formation-translation-nonfast-lite/analysis/PASSFAIL.json",
+    "../../outputs/m5-a2-formation-translation-gate/analysis/PASSFAIL.json",
+    "../../outputs/m16-a3-circuit-radius-response/analysis/PASSFAIL.json",
+    "../../outputs/m26-b2-tilt-dual-regime-gate/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-tilt-growth-baseline/analysis/PASSFAIL.json",
+    "../../outputs/m26-p18-phase-compression-gate/analysis/PASSFAIL.json",
+    "../../outputs/m26-p2-circuit-load-integration/analysis/PASSFAIL.json",
+    "../../outputs/m26-a4-conductor-load-gate/analysis/PASSFAIL.json",
+    "../../outputs/m26-b3-transport-closure-gate/analysis/PASSFAIL.json",
+    "../../outputs/m26-ml1-transport-surrogate/analysis/PASSFAIL.json",
+    "../../outputs/m1-b2-hybrid-smoke/analysis/PASSFAIL.json",
+    "../../outputs/m2-b2-hybrid-3d-smoke/analysis/PASSFAIL.json",
+    "../../outputs/m8-b1-mhd-vs-hybrid-compare/analysis/PASSFAIL.json",
+    "../../outputs/m24-c3-regression-pack/analysis/PASSFAIL.json",
+    "../../outputs/m23-c1-historical-benchmark-belova/analysis/PASSFAIL.json",
+    "../../outputs/m22-c2-synthetic-diagnostics-mvp/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-p19-off352-drive200-repeat512/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-p19-off352-drive200-repeat512/analysis/metrics.json",
+    "../../outputs/m17-b2-p19-off352-drive200-repeat512/analysis/metrics_pulse_kpi.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-helion-full-requirements",
+      "cmd": [
+        "{python}",
+        "tools/analyze_helion_full_requirements.py",
+        "--formation-case",
+        "m13-a2-formation-translation-nonfast-lite",
+        "--translation-case",
+        "m5-a2-formation-translation-gate",
+        "--response-case",
+        "m16-a3-circuit-radius-response",
+        "--tilt-dual-case",
+        "m26-b2-tilt-dual-regime-gate",
+        "--tilt-growth-case",
+        "m17-b2-tilt-growth-baseline",
+        "--compression-case",
+        "m26-p18-phase-compression-gate",
+        "--circuit-case",
+        "m26-p2-circuit-load-integration",
+        "--conductor-case",
+        "m26-a4-conductor-load-gate",
+        "--transport-case",
+        "m26-b3-transport-closure-gate",
+        "--surrogate-case",
+        "m26-ml1-transport-surrogate",
+        "--hybrid-rz-case",
+        "m1-b2-hybrid-smoke",
+        "--hybrid-3d-case",
+        "m2-b2-hybrid-3d-smoke",
+        "--hybrid-compare-case",
+        "m8-b1-mhd-vs-hybrid-compare",
+        "--regression-case",
+        "m24-c3-regression-pack",
+        "--benchmark-case",
+        "m23-c1-historical-benchmark-belova",
+        "--diagnostics-case",
+        "m22-c2-synthetic-diagnostics-mvp",
+        "--qeng-case",
+        "m17-b2-p19-off352-drive200-repeat512",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/helion_full_requirements.md",
+        "--matrix",
+        "{output_analysis}/helion_full_requirements_matrix.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "formation_microinstability_timing_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "translation_acceleration_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "merging_quality_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "compression_kev_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "stability_boundaries_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "expansion_recapture_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "q_eng_modeling_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "multi_fidelity_stack_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "circuit_em_coupling_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "hpc_engineering_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "ti_off_keV_proxy",
+      "op": ">=",
+      "value": 8.0
+    },
+    {
+      "metric": "ti_end_keV_proxy",
+      "op": ">=",
+      "value": 20.0
+    },
+    {
+      "metric": "q_eng_proxy",
+      "op": ">=",
+      "value": 0.8
+    },
+    {
+      "metric": "helion_full_requirements_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/helion_full_requirements.md",
+    "{output_analysis}/helion_full_requirements_matrix.csv"
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "id": "m17-b2-p11-drag000",
+  "description": "P8 drive envelope sweep (off_step=320).",
+  "case_notes": "Drive envelope step_rampdown off_step=320, ramp=32, driveAmp=1.0; FieldEnergy+U2+PNUM/RHOMAX/PENERGY; interval=4, max_steps=513.",
+  "engine": "warpx",
+  "gate_class": "b2_p8_envelope",
+  "physical_validity": "b2_p8_envelope",
+  "inputs": [
+    "inputs/warpx_args.json",
+    "inputs/h5_seed_config.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx-3d-hybrid",
+      "timeout_s": 43200,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=4",
+        "PYTHONPATH=pic-warpx-25.11/build-3d/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver_3d.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--init-mode",
+        "opmd_double_seed",
+        "--opmd-fluid",
+        "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/fluid_init.h5",
+        "--opmd-b",
+        "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/B_ext.h5",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--run-tag",
+        "m17-b2-p11-drag000"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-formation-0d",
+      "cmd": [
+        "{python}",
+        "tools/analyze_formation_0d.py",
+        "--particle-number",
+        "{output_raw}/run/diags/reducedfiles/PNUM.txt",
+        "--rho-max",
+        "{output_raw}/run/diags/reducedfiles/RHOMAX.txt",
+        "--particle-energy",
+        "{output_raw}/run/diags/reducedfiles/PENERGY.txt",
+        "--field-energy",
+        "{output_raw}/run/diags/reducedfiles/ENERGY0D.txt",
+        "--metrics-out",
+        "{output_analysis}/metrics_formation.json"
+      ]
+    },
+    {
+      "name": "analyze-u2-stats",
+      "cmd": [
+        "{python}",
+        "tools/analyze_u2_stats.py",
+        "--u2",
+        "{output_raw}/run/diag/reducedfiles/U2.txt",
+        "--merge-in",
+        "{output_analysis}/metrics_formation.json",
+        "--metrics-out",
+        "{output_analysis}/metrics_p8.json"
+      ]
+    },
+    {
+      "name": "analyze-u2-hist",
+      "cmd": [
+        "{python}",
+        "tools/analyze_u2_hist.py",
+        "--hist",
+        "{output_raw}/run/diag/reducedfiles/U2Hist.txt",
+        "--warpx-args",
+        "{case_dir}/inputs/warpx_args.json",
+        "--metrics-out",
+        "{output_analysis}/metrics_u2hist.json"
+      ]
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/warpx_heartbeat.json",
+    "{output_raw}/run/diags/reducedfiles/PNUM.txt",
+    "{output_raw}/run/diags/reducedfiles/RHOMAX.txt",
+    "{output_raw}/run/diags/reducedfiles/PENERGY.txt",
+    "{output_raw}/run/diags/reducedfiles/ENERGY0D.txt",
+    "{output_raw}/run/diag/reducedfiles/U2.txt",
+    "{output_analysis}/metrics_formation.json",
+    "{output_analysis}/metrics_p8.json",
+    "{output_analysis}/metrics_u2hist.json",
+    "{output_raw}/run/diag/reducedfiles/U2Hist.txt"
+  ],
+  "metrics_file": "{output_analysis}/metrics_p8.json",
+  "artifact_policy": {
+    "archive_pass": false,
+    "prune_raw_on_fail": false,
+    "prune_raw_on_pass": false
+  },
+  "thresholds": [
+    {
+      "metric": "formation_series_len",
+      "op": ">=",
+      "value": 129
+    },
+    {
+      "metric": "u2_series_len_unique",
+      "op": ">=",
+      "value": 129
+    }
+  ]
+}

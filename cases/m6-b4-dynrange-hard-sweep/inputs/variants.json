@@ -1,0 +1,21 @@
+{
+  "control": "m6-b4-dynrange-hard-control",
+  "floor_only": "m6-b4-dynrange-hard-floor",
+  "substeps_only": "m6-b4-dynrange-hard-substeps",
+  "treatment": "m6-b4-dynrange-hard-both",
+  "min_outputs": 10,
+  "energy_drift_margin": 0.05,
+  "energy_drift_cap": 0.2,
+  "observable_metric": "auto",
+  "observable_candidates": [
+    "mag_energy_final",
+    "field_energy_final",
+    "b_rms_final"
+  ],
+  "observable_norm_eps": 1.0e-30,
+  "observable_min_rel_diff": 0.02,
+  "observable_abs_floor": 1.0e-6,
+  "expect_control_fail": true,
+  "require_control_fail": false,
+  "allow_weak_pass": true
+}

@@ -1,0 +1,69 @@
+{
+  "id": "m16-a3-circuit-radius-response",
+  "description": "A3.1 circuit radius response compare (driver amplitude perturbation).",
+  "engine": "pipeline",
+  "gate_class": "a3_circuit_response",
+  "physical_validity": "a3_closed_loop_response",
+  "inputs": [
+    "inputs/variants.json"
+  ],
+  "run": [
+    {
+      "name": "run-a3-circuit-variants",
+      "cmd": [
+        "{python}",
+        "tools/run_a3_circuit_response.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--stage",
+        "all"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-a3-circuit-response",
+      "cmd": [
+        "{python}",
+        "tools/analyze_a3_circuit_response.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/compare_summary.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "driver_response_ratio",
+      "op": ">=",
+      "value": 1.1
+    }
+  ],
+  "thresholds_layer1": [
+    {
+      "metric": "driver_response_ratio",
+      "op": ">=",
+      "value": 1.1
+    }
+  ],
+  "thresholds_layer2": [
+    {
+      "metric": "radius_rms_range_ratio",
+      "op": ">=",
+      "value": 1.02
+    },
+    {
+      "metric": "r_proxy_b_rms_range_ratio",
+      "op": ">=",
+      "value": 1.02
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/compare_summary.json"
+  ]
+}

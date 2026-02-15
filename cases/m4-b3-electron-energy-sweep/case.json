@@ -1,0 +1,54 @@
+{
+  "id": "m4-b3-electron-energy-sweep",
+  "description": "B3 electron-energy on/off sweep (MVP gate).",
+  "engine": "pipeline",
+  "gate_class": "b3_sweep",
+  "physical_validity": "electron_energy_gate",
+  "inputs": [
+    "inputs/variants.json"
+  ],
+  "run": [
+    {
+      "name": "run-b3-variants",
+      "cmd": [
+        "{python}",
+        "tools/run_b3_sweep.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--stage",
+        "all"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b3-sweep",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b3_sweep.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/variant_summary.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "sweep_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/variant_summary.json",
+    "{output_plots}/te_mean_vs_time.png",
+    "{output_plots}/te_range_compare.png"
+  ]
+}

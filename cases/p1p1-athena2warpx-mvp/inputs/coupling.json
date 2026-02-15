@@ -1,0 +1,7 @@
+{
+  "athena_fluid_path": "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/fluid_init.h5",
+  "athena_b_path": "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/B_ext.h5",
+  "roi_bounds": null,
+  "t_field": 0.0,
+  "unit_note": "internal"
+}

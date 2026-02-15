@@ -1,0 +1,115 @@
+{
+  "id": "m1-a2-frc-merge-fast",
+  "description": "A2 merging case (fast) using Athena++ frc_merge problem generator.",
+  "engine": "athena",
+  "inputs": [
+    "inputs/athinput.frc_merge_fast"
+  ],
+  "run": [
+    {
+      "name": "build-athena",
+      "timeout_s": 600,
+      "cmd": [
+        "{python}",
+        "tools/build_athena.py",
+        "--athena-root",
+        "athena-24.0",
+        "--prob",
+        "frc_merge",
+        "--jobs",
+        "4",
+        "--magnetic",
+        "--clean"
+      ]
+    },
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-athena",
+      "timeout_s": 900,
+      "cmd": [
+        "athena-24.0/bin/athena",
+        "-i",
+        "{case_dir}/inputs/athinput.frc_merge_fast",
+        "-d",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-frc-merge",
+      "cmd": [
+        "{python}",
+        "tools/analyze_frc_merge_case.py",
+        "--run-dir",
+        "{output_raw}/run",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--merge-sep-threshold",
+        "1.0"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "num_outputs",
+      "op": ">=",
+      "value": 5
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "mass_rel_drift",
+      "op": "<=",
+      "value": 0.001
+    },
+    {
+      "metric": "total_energy_rel_drift",
+      "op": "<=",
+      "value": 0.05
+    },
+    {
+      "metric": "divB_rel",
+      "op": "<=",
+      "value": 0.001
+    },
+    {
+      "metric": "merged_time_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "merged_time_frac",
+      "op": "<=",
+      "value": 0.9
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/frc_merge.hst",
+    "{output_analysis}/metrics.json",
+    "{output_plots}/energy_budget.png",
+    "{output_plots}/divb_vs_time.png",
+    "{output_plots}/merge_indicator_vs_time.png",
+    "{output_plots}/density_snapshot.png",
+    "{output_logs}/run_run-athena.log",
+    "{output_logs}/run_build-athena.log"
+  ]
+}

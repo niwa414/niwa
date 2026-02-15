@@ -1,0 +1,97 @@
+{
+  "id": "m26-a4-conductor-load-gate",
+  "description": "A4 full gate: EB wall baseline + moving-wall behavior + engineering load handoff.",
+  "engine": "pipeline",
+  "gate_class": "a4_conductor_load_gate",
+  "physical_validity": "engineering_interface",
+  "inputs": [
+    "../../outputs/m4-a4-eb-wall-gate/analysis/PASSFAIL.json",
+    "../../outputs/m22-a4-eb-movingwall-stage2-tight/analysis/PASSFAIL.json",
+    "../../outputs/m26-d2-magnetic-load-interface/analysis/PASSFAIL.json",
+    "../../outputs/m26-d2-magnetic-load-interface/analysis/magnetic_load_series.csv"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-a4-conductor-load-gate",
+      "cmd": [
+        "{python}",
+        "tools/analyze_a4_conductor_load_gate.py",
+        "--base-case",
+        "m4-a4-eb-wall-gate",
+        "--moving-case",
+        "m22-a4-eb-movingwall-stage2-tight",
+        "--load-case",
+        "m26-d2-magnetic-load-interface",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/a4_conductor_load_summary.md"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "base_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "moving_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "load_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "base_eb_mask_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "moving_wall_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "load_interface_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "load_handoff_artifacts_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "load_force_proxy_peak_N",
+      "op": ">",
+      "value": 1.0
+    },
+    {
+      "metric": "load_eta_recaptured",
+      "op": ">=",
+      "value": 0.3
+    },
+    {
+      "metric": "a4_full_gate_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/a4_conductor_load_summary.md"
+  ]
+}

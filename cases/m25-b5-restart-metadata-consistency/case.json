@@ -1,0 +1,133 @@
+{
+  "id": "m25-b5-restart-metadata-consistency",
+  "description": "B5 restart consistency from pre/post WarpX metadata (stable regression gate).",
+  "engine": "pipeline",
+  "gate_class": "b5_restart_metadata",
+  "physical_validity": "pipeline_regression",
+  "inputs": [
+    "../../outputs/m12-b5-restart-consistency/raw/run/handoff_meta.json",
+    "../../outputs/m12-b5-restart-consistency/raw/run/warpx_run_m12-b5-restart-pre.json",
+    "../../outputs/m12-b5-restart-consistency/raw/run/warpx_run_m12-b5-restart-post.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b5-restart-metadata",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b5_restart_metadata.py",
+        "--handoff-meta",
+        "outputs/m12-b5-restart-consistency/raw/run/handoff_meta.json",
+        "--warpx-meta-before",
+        "outputs/m12-b5-restart-consistency/raw/run/warpx_run_m12-b5-restart-pre.json",
+        "--warpx-meta-after",
+        "outputs/m12-b5-restart-consistency/raw/run/warpx_run_m12-b5-restart-post.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/restart_meta_summary.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "handoff_meta_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "pre_meta_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "post_meta_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "pre_completed",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "post_completed",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "pre_last_step",
+      "op": ">=",
+      "value": 99
+    },
+    {
+      "metric": "post_last_step",
+      "op": ">=",
+      "value": 199
+    },
+    {
+      "metric": "pre_monitor_records",
+      "op": ">=",
+      "value": 100
+    },
+    {
+      "metric": "post_monitor_records",
+      "op": ">=",
+      "value": 200
+    },
+    {
+      "metric": "pre_drop_breach",
+      "op": "==",
+      "value": false
+    },
+    {
+      "metric": "post_drop_breach",
+      "op": "==",
+      "value": false
+    },
+    {
+      "metric": "restart_sanity_efield_finite",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "restart_weight_rel_jump",
+      "op": "<=",
+      "value": 1e-12
+    },
+    {
+      "metric": "restart_particle_rel_jump",
+      "op": "<=",
+      "value": 1e-12
+    },
+    {
+      "metric": "restart_charge_rel_jump",
+      "op": "<=",
+      "value": 1e-12
+    },
+    {
+      "metric": "restart_energy_rel_jump",
+      "op": "<=",
+      "value": 1e-10
+    },
+    {
+      "metric": "restart_consistency_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/restart_meta_summary.json"
+  ]
+}

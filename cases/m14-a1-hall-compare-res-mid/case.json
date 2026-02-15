@@ -1,0 +1,53 @@
+{
+  "id": "m14-a1-hall-compare-res-mid",
+  "description": "A1 Hall on/off comparison (resolution sweep mid).",
+  "engine": "pipeline",
+  "gate_class": "a1_hall_compare",
+  "physical_validity": "hall_on_off_compare",
+  "inputs": [
+    "inputs/variants.json"
+  ],
+  "run": [
+    {
+      "name": "run-a1-hall-variants",
+      "cmd": [
+        "{python}",
+        "tools/run_a1_hall_compare.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--stage",
+        "all"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-a1-hall-compare",
+      "cmd": [
+        "{python}",
+        "tools/analyze_a1_hall_compare.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/compare_summary.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "compare_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/compare_summary.json",
+    "{output_plots}/reconnection_rate_overlay.png"
+  ]
+}

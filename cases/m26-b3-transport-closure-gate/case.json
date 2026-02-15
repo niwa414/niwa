@@ -1,0 +1,93 @@
+{
+  "id": "m26-b3-transport-closure-gate",
+  "description": "B3 full gate: stage1 coupling sweep + stage2 electron-energy closure metrics.",
+  "engine": "pipeline",
+  "gate_class": "b3_transport_closure_gate",
+  "physical_validity": "electron_transport_closure",
+  "inputs": [
+    "../../outputs/m5-b3-1-electron-energy-coupled-sweep/analysis/PASSFAIL.json",
+    "../../outputs/m23-b3-electron-energy-stage2-closure/analysis/PASSFAIL.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b3-transport-closure-gate",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b3_transport_closure_gate.py",
+        "--sweep-case",
+        "m5-b3-1-electron-energy-coupled-sweep",
+        "--closure-case",
+        "m23-b3-electron-energy-stage2-closure",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/b3_transport_closure_summary.md"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "sweep_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "closure_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "coupling_effect_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "observable_rel_diff",
+      "op": ">=",
+      "value": 0.05
+    },
+    {
+      "metric": "treatment_writeback_ratio",
+      "op": ">=",
+      "value": 0.9
+    },
+    {
+      "metric": "electron_energy_balance_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "electron_energy_balance_rel_err",
+      "op": "<=",
+      "value": 1e-06
+    },
+    {
+      "metric": "te_scaling_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "electron_records_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "b3_full_gate_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/b3_transport_closure_summary.md"
+  ]
+}

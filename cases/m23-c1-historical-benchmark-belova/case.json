@@ -1,0 +1,93 @@
+{
+  "id": "m23-c1-historical-benchmark-belova",
+  "description": "C1 historical benchmark package using Belova mirror-compression waveform alignment.",
+  "engine": "pipeline",
+  "gate_class": "c1_historical_benchmark",
+  "physical_validity": "benchmark_proxy",
+  "inputs": [
+    "../../athena-24.0/inputs/mhd/athinput.belova_b2_gs_emf_mwall80_smooth",
+    "../../outputs/m17-b2-formation0d-driveN032/raw/inputs/case.json",
+    "../../outputs/m17-b2-formation0d-driveN032/raw/inputs/inputs/warpx_args.json",
+    "../../outputs/m17-b2-formation0d-driveN032/raw/run/diag/reducedfiles/COIL.txt",
+    "../../outputs/m17-b2-formation0d-driveN032/raw/run/diags/reducedfiles/PNUM.txt",
+    "../../scenes/belova_b2_mirror_ramp_smooth.csv"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "generate-benchmark-synthetic",
+      "cmd": [
+        "{python}",
+        "tools/generate_synthetic_diagnostics.py",
+        "--run-dir",
+        "outputs/m17-b2-formation0d-driveN032/raw/run",
+        "--out-dir",
+        "{output_analysis}/synthetic",
+        "--metrics",
+        "{output_analysis}/synthetic_metrics.json"
+      ]
+    },
+    {
+      "name": "benchmark-align-belova",
+      "cmd": [
+        "{python}",
+        "tools/benchmark_signal_alignment.py",
+        "--signal",
+        "{output_analysis}/synthetic/signal_flux.csv",
+        "--target-waveform",
+        "scenes/belova_b2_mirror_ramp_smooth.csv",
+        "--summary",
+        "{output_analysis}/benchmark_summary.json",
+        "--plot",
+        "{output_plots}/sim_vs_benchmark_flux.png",
+        "--min-points",
+        "40"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/benchmark_summary.json",
+  "thresholds": [
+    {
+      "metric": "alignment_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "alignment_points",
+      "op": ">=",
+      "value": 40
+    },
+    {
+      "metric": "alignment_r2",
+      "op": ">=",
+      "value": 0.9
+    },
+    {
+      "metric": "alignment_corrcoef",
+      "op": ">=",
+      "value": 0.9
+    },
+    {
+      "metric": "plot_exists",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/synthetic_metrics.json",
+    "{output_analysis}/synthetic/signal_bdot.csv",
+    "{output_analysis}/synthetic/signal_flux.csv",
+    "{output_analysis}/synthetic/signal_interferometer.csv",
+    "{output_analysis}/benchmark_summary.json",
+    "{output_plots}/sim_vs_benchmark_flux.png"
+  ]
+}

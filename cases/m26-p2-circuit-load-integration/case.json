@@ -1,0 +1,109 @@
+{
+  "id": "m26-p2-circuit-load-integration",
+  "description": "Integrated circuit-load gate: A3 closed-loop + P2 energy/flux + D1 magnetic-load interface.",
+  "engine": "pipeline",
+  "gate_class": "p2_circuit_load_integration",
+  "physical_validity": "engineering_interface",
+  "inputs": [
+    "../../outputs/m5-a3-closed-loop-strong/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-circuit-mvp-mainline-Rload2000-coil4/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-circuit-mvp-drift-summary/analysis/PASSFAIL.json",
+    "../../outputs/m26-d2-magnetic-load-interface/analysis/PASSFAIL.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-circuit-load-integration",
+      "cmd": [
+        "{python}",
+        "tools/analyze_circuit_load_integration.py",
+        "--a3-case",
+        "m5-a3-closed-loop-strong",
+        "--p2-mainline-case",
+        "m17-b2-circuit-mvp-mainline-Rload2000-coil4",
+        "--p2-drift-case",
+        "m17-b2-circuit-mvp-drift-summary",
+        "--d1-case",
+        "m26-d2-magnetic-load-interface",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/integration_summary.md"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "a3_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "p2_mainline_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "p2_drift_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "d1_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "a3_closed_loop_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "p2_energy_chain_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "p2_drift_invariant_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "d1_load_interface_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "mainline_load_embedded",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "mainline_load_energy_chain_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "mainline_load_force_peak_N",
+      "op": ">",
+      "value": 1.0
+    },
+    {
+      "metric": "integrated_gate_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/integration_summary.md"
+  ]
+}

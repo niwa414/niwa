@@ -1,0 +1,7 @@
+{
+  "control": "m4-b3-electron-energy-off",
+  "treatment": "m4-b3-electron-energy-on",
+  "min_outputs": 6,
+  "te_variation_eps": 0.01,
+  "te_off_eps": 1.0e-6
+}

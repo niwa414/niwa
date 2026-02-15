@@ -1,0 +1,90 @@
+<comment>
+  Two-plasmoid FRC-like merging test using frc_merge problem generator.
+  2D cartesian (x ~ axial, y ~ radial). Plasmoids centered at +/- plasmoid_sep/2,
+  pushed together by initial inflow. Guide field optional.
+</comment>
+
+<job>
+  problem_id   = frc_merge
+  maxout       = 50
+</job>
+
+<mesh>
+  ix1_bc = outflow
+  ox1_bc = outflow
+  ix2_bc = reflecting
+  ox2_bc = reflecting
+  ix3_bc = periodic
+  ox3_bc = periodic
+
+  x1min = -8.0
+  x1max =  8.0
+  x2min = -4.0
+  x2max =  4.0
+  x3min = 0.0
+  x3max = 1.0
+
+  nx1 = 256
+  nx2 = 128
+  nx3 = 1
+</mesh>
+
+<time>
+  cfl_number = 0.15
+  nlim       = -1
+  tlim       = 20.0
+</time>
+
+<output1>
+  file_type = vtk
+  dt        = 0.5
+  variable  = prim
+</output1>
+
+<output2>
+  file_type = hst
+  dt        = 0.05
+</output2>
+
+<problem>
+  rho0                 = 1.0
+  p0                   = 0.05
+  rho_core             = 2.0
+  p_core               = 0.15
+  plasmoid_radius      = 1.0
+  plasmoid_sep         = 5.0
+  b_core               = 1.0
+  b_guide              = 0.0
+  v_inflow             = 0.2
+  v_profile_radius     = 1.2
+
+  # Optional external B(t) drive from CSV (see src/pgen/frc_merge.cpp)
+  # NOTE: set ix1_bc/ox1_bc = user when enabling waveform drive.
+  # b_waveform          = mhd-r/frc_long_full/lcr_waveform.csv
+  # b_waveform_column   = 6
+  # b_waveform_scale    = 1.0
+  # b_waveform_bias     = 0.0
+  # b_waveform_tshift   = 0.0
+  # Spatial profile for driven Bz:
+  # b_ext_profile       = mirror
+  # mirror_ratio        = 1.5
+
+  eta_hall             = 0.08
+  hall_theta           = 0.5
+  hall_tol             = 1e-8
+  hall_max_iter        = 40
+  hall_cfl             = 0.01
+  hall_implicit        = 0
+  hall_implicit_include_ohm = 0
+  eta_ohm              = 0.0
+</problem>
+
+<hydro>
+  gamma = 5.0/3.0
+  reconstruction = plm
+  riemann_solver = hlld
+</hydro>
+
+<field>
+  integration = ct
+</field>

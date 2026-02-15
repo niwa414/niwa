@@ -1,0 +1,20 @@
+{
+  "mode": "const-b-plasma",
+  "solver": "yee",
+  "n_azimuthal_modes": 2,
+  "periodic_z": true,
+  "hybrid": false,
+  "const_B": 0.05,
+  "tilt_eps": 0.05,
+  "ppc": 2,
+  "max_steps": 24,
+  "dt": 5.0e-12,
+  "diag_period": 4,
+  "monitor_interval": 1,
+  "drop_threshold": 100,
+  "nr": 32,
+  "nz": 64,
+  "r_max": 0.1,
+  "z_max": 0.2,
+  "run_tag": "m1-b2-tilt-smoke"
+}

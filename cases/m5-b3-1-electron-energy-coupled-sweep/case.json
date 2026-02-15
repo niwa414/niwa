@@ -1,0 +1,95 @@
+{
+  "id": "m5-b3-1-electron-energy-coupled-sweep",
+  "description": "B3.1 electron-energy coupled on/off sweep (gate-only).",
+  "engine": "pipeline",
+  "gate_class": "b3_sweep",
+  "physical_validity": "electron_energy_coupled_gate",
+  "inputs": [
+    "inputs/variants.json"
+  ],
+  "run": [
+    {
+      "name": "run-b3-variants",
+      "cmd": [
+        "{python}",
+        "tools/run_b3_sweep.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--stage",
+        "all"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b3-1-sweep",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b3_1_sweep.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/variant_summary.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "sweep_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "treatment_writeback_ratio",
+      "op": ">=",
+      "value": 0.9
+    },
+    {
+      "metric": "treatment_feedback_failures",
+      "op": "==",
+      "value": 0
+    },
+    {
+      "metric": "treatment_writeback_series",
+      "op": "==",
+      "value": "density_floor"
+    },
+    {
+      "metric": "treatment_floor_std",
+      "op": ">",
+      "value": 0.0
+    },
+    {
+      "metric": "treatment_feedback_target_used",
+      "op": "==",
+      "value": "density_floor"
+    },
+    {
+      "metric": "observable_rel_diff",
+      "op": ">=",
+      "value": 0.05
+    },
+    {
+      "metric": "observable_control_abs",
+      "op": ">=",
+      "value": 1.0e-12
+    },
+    {
+      "metric": "observable_treatment_abs",
+      "op": ">=",
+      "value": 1.0e-12
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/variant_summary.json",
+    "{output_plots}/te_mean_vs_time.png",
+    "{output_plots}/density_floor_vs_time.png",
+    "{output_plots}/observable_compare.png"
+  ]
+}

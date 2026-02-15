@@ -1,0 +1,11 @@
+# Belova B2 mirror-compression ramp (dimensionless fraction).
+# Used with WarpX external-basis superposition:
+#   B_ext(t) = B_bias + frac(t) * (B_mirror - B_bias)
+# Tune the times below to match your WarpX dt * max_steps time window.
+t,frac
+0.0,0.0
+5.0e-07,0.1464466094
+1.0e-06,0.5
+1.5e-06,0.8535533906
+2.0e-06,1.0
+1.0e-05,1.0

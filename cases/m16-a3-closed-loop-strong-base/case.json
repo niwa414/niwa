@@ -1,0 +1,120 @@
+{
+  "id": "m16-a3-closed-loop-strong-base",
+  "description": "A3.1 base closed-loop variant (per-step coupling) using LCR feedback and driver writeback.",
+  "engine": "warpx",
+  "gate_class": "circuit_gate",
+  "physical_validity": "a3_closed_loop_strong",
+  "inputs": [
+    "inputs/warpx_args.json",
+    "../../warpx-driver/B_ext_smoke.h5"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx",
+      "timeout_s": 1200,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-rz/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--run-tag",
+        "m16-a3-closed-loop-strong-base"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-a3-strong",
+      "cmd": [
+        "{python}",
+        "tools/analyze_a3_closed_loop_case.py",
+        "--metadata",
+        "{output_raw}/run/warpx_run_m16-a3-closed-loop-strong-base.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--lcr-csv",
+        "{output_analysis}/lcr_history.csv",
+        "--feedback-csv",
+        "{output_analysis}/feedback_series.csv",
+        "--feedback-signal-source",
+        "r_proxy_b_rms"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "strong_coupling_enabled",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "coupling_stride",
+      "op": "==",
+      "value": 1
+    },
+    {
+      "metric": "circuit_update_fraction",
+      "op": ">=",
+      "value": 0.9
+    },
+    {
+      "metric": "driver_writeback_fraction",
+      "op": ">=",
+      "value": 0.9
+    },
+    {
+      "metric": "driver_writeback_match",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "driver_amp_std",
+      "op": ">",
+      "value": 0.0
+    },
+    {
+      "metric": "feedback_used_fraction",
+      "op": ">=",
+      "value": 0.9
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/warpx_run_m16-a3-closed-loop-strong-base.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/lcr_history.csv",
+    "{output_analysis}/feedback_series.csv",
+    "{output_plots}/lcr_current_vs_time.png",
+    "{output_plots}/feedback_vs_rplasma.png",
+    "{output_plots}/radius_rms_vs_time.png",
+    "{output_plots}/driver_amp_vs_time.png",
+    "{output_plots}/radius_rms_and_driver_amp_overlay.png"
+  ]
+}

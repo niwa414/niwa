@@ -1,0 +1,219 @@
+{
+  "id": "m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampminus10",
+  "description": "H5 gate: MHD-seeded 3D Hybrid merge -> tilt -> gamma fit (seed_amp -10%).",
+  "engine": "warpx",
+  "gate_class": "h5_gate",
+  "physical_validity": "mhd_seeded_hybrid_merge_tilt_gamma",
+  "inputs": [
+    "inputs/warpx_args.json",
+    "inputs/h5_seed_config.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx-3d-hybrid",
+      "timeout_s": 3600,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-3d/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver_3d.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--init-mode",
+        "opmd_double_seed",
+        "--opmd-fluid",
+        "outputs/m6-h4-mhd-seeded-hybrid-3d-continuation/raw/run/fluid_init.h5",
+        "--opmd-b",
+        "outputs/m6-h4-mhd-seeded-hybrid-3d-continuation/raw/run/B_ext.h5",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--run-tag",
+        "m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampminus10"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-h5-merge-tilt",
+      "cmd": [
+        "{python}",
+        "tools/analyze_h3a_merge_tilt_case.py",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--metadata",
+        "{output_raw}/run/warpx_run_m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampminus10.json",
+        "--metrics",
+        "{output_analysis}/metrics_h3a.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--sep-csv",
+        "{output_analysis}/separation_series.csv",
+        "--tilt-csv",
+        "{output_analysis}/tilt_post_merge_series.csv",
+        "--tilt-metric",
+        "slope",
+        "--tilt-z-bins",
+        "16",
+        "--merge-frac",
+        "0.6",
+        "--merge-floor-mult",
+        "1.7",
+        "--guard-outputs",
+        "2",
+        "--sep-mode",
+        "x",
+        "--merge-method",
+        "kmeans",
+        "--kmeans-max-points",
+        "50000",
+        "--kmeans-iter",
+        "10",
+        "--kmeans-threshold-frac",
+        "0.6",
+        "--kmeans-bg-quantile",
+        "10",
+        "--kmeans-min-ratio",
+        "0.2",
+        "--kmeans-warm-start",
+        "1",
+        "--kmeans-merge-criterion",
+        "sep",
+        "--kmeans-inertia-guard-outputs",
+        "1",
+        "--merge-persist",
+        "3"
+      ]
+    },
+    {
+      "name": "analyze-h5-gamma-fit",
+      "cmd": [
+        "{python}",
+        "tools/analyze_h3b_growth_fit.py",
+        "--series",
+        "{output_analysis}/tilt_post_merge_series.csv",
+        "--source-metrics",
+        "{output_analysis}/metrics_h3a.json",
+        "--metrics",
+        "{output_analysis}/metrics_h3b.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--fit-csv",
+        "{output_analysis}/tilt_fit_series.csv"
+      ]
+    },
+    {
+      "name": "analyze-h5-merge-gamma",
+      "cmd": [
+        "{python}",
+        "tools/analyze_h5_merge_tilt_gamma.py",
+        "--h3a-metrics",
+        "{output_analysis}/metrics_h3a.json",
+        "--h3b-metrics",
+        "{output_analysis}/metrics_h3b.json",
+        "--warpx-meta",
+        "{output_raw}/run/warpx_run_m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampminus10.json",
+        "--metrics-out",
+        "{output_analysis}/metrics.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "num_outputs",
+      "op": ">=",
+      "value": 20
+    },
+    {
+      "metric": "drop_breach",
+      "op": "==",
+      "value": false
+    },
+    {
+      "metric": "merge_time_frac",
+      "op": "<=",
+      "value": 0.5
+    },
+    {
+      "metric": "tilt_post_merge_samples",
+      "op": ">=",
+      "value": 30
+    },
+    {
+      "metric": "tilt_post_merge_amp_max",
+      "op": ">",
+      "value": 0.0
+    },
+    {
+      "metric": "tilt_post_merge_no_nan",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "gamma_best",
+      "op": ">",
+      "value": 0.0
+    },
+    {
+      "metric": "r2_best",
+      "op": ">=",
+      "value": 0.85
+    },
+    {
+      "metric": "merge_time_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "fit_window_found",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "fit_points",
+      "op": ">=",
+      "value": 12
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/warpx_run_m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampminus10.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/metrics_h3a.json",
+    "{output_analysis}/metrics_h3b.json",
+    "{output_analysis}/separation_series.csv",
+    "{output_analysis}/tilt_post_merge_series.csv",
+    "{output_analysis}/tilt_fit_series.csv",
+    "{output_plots}/separation_vs_time.png",
+    "{output_plots}/separation_kmeans_vs_time.png",
+    "{output_plots}/kmeans_inertia_ratio_vs_time.png",
+    "{output_plots}/merge_time_comparison.png",
+    "{output_plots}/centroid_paths_two_blobs.png",
+    "{output_plots}/tilt_centroid_amp_post_merge.png",
+    "{output_plots}/tilt_slope_post_merge.png",
+    "{output_plots}/tilt_amp_post_merge.png",
+    "{output_plots}/tilt_log_fit.png",
+    "{output_plots}/energy_budget_vs_time.png",
+    "{output_plots}/density_snapshot.png"
+  ]
+}

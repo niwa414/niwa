@@ -1,0 +1,95 @@
+{
+  "id": "m26-p18-phase-compression-gate",
+  "description": "P18 full gate: off_step sweep confirms phase-window compression KPI progression.",
+  "engine": "pipeline",
+  "gate_class": "p18_phase_compression_gate",
+  "physical_validity": "p18_phase_compression",
+  "inputs": [
+    "../../outputs/m17-b2-p18-off192/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-p18-off256/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-p18-off320/analysis/PASSFAIL.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-p18-phase-compression-gate",
+      "cmd": [
+        "{python}",
+        "tools/analyze_p18_phase_compression_gate.py",
+        "--cases",
+        "m17-b2-p18-off192,m17-b2-p18-off256,m17-b2-p18-off320",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/p18_phase_compression_summary.md",
+        "--table",
+        "{output_analysis}/p18_phase_compression_table.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "case_count",
+      "op": ">=",
+      "value": 3
+    },
+    {
+      "metric": "cases_all_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "off_steps_strictly_increasing",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "b_energy_peak_matches_off_step_all",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "phase_detected_all",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "rho_delta_rel_phase_monotonic",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "step_rho_peak_monotonic",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "rho_delta_rel_phase_gain",
+      "op": ">=",
+      "value": 2.0
+    },
+    {
+      "metric": "phase_kpi_table_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "p18_full_gate_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/p18_phase_compression_summary.md",
+    "{output_analysis}/p18_phase_compression_table.csv"
+  ]
+}

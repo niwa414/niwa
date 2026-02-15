@@ -1,0 +1,17 @@
+{
+  "source_case_id": "m5-a2-formation-translation-gate",
+  "handoff_case_id": "m6-h4-mhd-seeded-hybrid-3d-continuation",
+  "vtk_pattern": "outputs/m5-a2-formation-translation-gate/raw/run/frc_merge.block0.out1.*.vtk",
+  "compare_window": {
+    "dt_s": 5.0e-12,
+    "max_steps": 200,
+    "diag_period": 20
+  },
+  "traj_window": {
+    "vtk_points": 5,
+    "min_points": 3,
+    "rel_eps": 1.0e-30,
+    "allow_index_fallback": true
+  },
+  "notes": "MHD t0 vs Hybrid short-window continuation comparison."
+}

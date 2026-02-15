@@ -1,0 +1,6 @@
+case,drift,status,failure_reason,merge_time_source,merge_time_ok,fit_window_strategy,fit_points,drift_rel_diff_max,tilt_post_merge_amp_max
+m17-b2-p33-off352-drive100-repeat128-drift0320,0.32,FAIL,GATE_FAIL,formation.phase_peak,True,fallback_full,12,1.6,0.008355322
+m17-b2-p33-off352-drive100-repeat128-drift0340,0.34,PASS,,formation.phase_peak,True,fallback_full,24,1.7000000000000002,0.01216547
+m17-b2-p33-off352-drive100-repeat128-drift0352,0.352,PASS,,formation.phase_peak,True,fallback_full,24,1.7599999999999998,0.01216547
+m17-b2-p33-off352-drive100-repeat128-drift0360,0.36,PASS,,formation.phase_peak,True,fallback_full,24,1.7999999999999998,0.01216547
+m17-b2-p33-off352-drive100-repeat128-drift0380,0.38,PASS,,formation.phase_peak,True,fallback_full,24,1.9,0.01216547

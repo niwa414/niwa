@@ -1,0 +1,10 @@
+{
+  "amp_minus": "m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampminus10",
+  "amp_plus": "m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampplus10",
+  "variants": [
+    "m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampminus10",
+    "m7-h5-mhdseed-hybrid-merge-tilt-gamma-ampplus10"
+  ],
+  "gamma_ratio_max": 10.0,
+  "require_same_sign": true
+}

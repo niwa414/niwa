@@ -1,0 +1,7 @@
+{
+  "base": "m16-a3-closed-loop-strong-base",
+  "perturb": "m16-a3-closed-loop-strong-ampplus30",
+  "metric": "feedback_signal_range",
+  "ratio_min": 1.02,
+  "feedback_signal_source": "r_proxy_b_rms"
+}

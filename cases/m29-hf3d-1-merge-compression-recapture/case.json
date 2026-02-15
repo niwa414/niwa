@@ -1,0 +1,75 @@
+{
+  "id": "m29-hf3d-1-merge-compression-recapture",
+  "description": "HF3D animation #1: merge/compression topology + expansion/recapture electrical chain.",
+  "engine": "pipeline",
+  "gate_class": "hf3d_animation_merge_recap",
+  "physical_validity": "visual_high_fidelity_3d",
+  "inputs": [
+    "../../outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/diag/diag1000000/Header",
+    "../../outputs/m26-d2-magnetic-load-interface/analysis/magnetic_load_series.csv"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "render-hf3d-merge-recapture",
+      "cmd": [
+        "{python}",
+        "tools/render_hf3d_merge_recapture.py",
+        "--diag-dir",
+        "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/diag",
+        "--load-series",
+        "outputs/m26-d2-magnetic-load-interface/analysis/magnetic_load_series.csv",
+        "--max-frames",
+        "20",
+        "--point-budget",
+        "12000",
+        "--fps",
+        "10",
+        "--mp4-out",
+        "{output_plots}/merge_compression_recapture_3d.mp4",
+        "--gif-out",
+        "{output_plots}/merge_compression_recapture_3d.gif",
+        "--metrics-out",
+        "{output_analysis}/metrics.json",
+        "--summary-out",
+        "{output_analysis}/hf3d_merge_recapture.md"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "frames_rendered",
+      "op": ">=",
+      "value": 8
+    },
+    {
+      "metric": "load_series_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "recapture_dphi_peak_v",
+      "op": ">",
+      "value": 1.0
+    },
+    {
+      "metric": "render_success",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/hf3d_merge_recapture.md",
+    "{output_plots}/merge_compression_recapture_3d.mp4",
+    "{output_plots}/merge_compression_recapture_3d.gif"
+  ]
+}

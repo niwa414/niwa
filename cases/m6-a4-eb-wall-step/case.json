@@ -1,0 +1,116 @@
+{
+  "id": "m6-a4-eb-wall-step",
+  "description": "A4 embedded boundary (stair-step mask) wall gate using frc_merge with a step cyl_wall profile (short-window stability gate).",
+  "engine": "athena",
+  "gate_class": "a4_eb_gate",
+  "physical_validity": "limited",
+  "inputs": [
+    "inputs/athinput.a4_eb_wall_step"
+  ],
+  "run": [
+    {
+      "name": "build-athena",
+      "timeout_s": 600,
+      "cmd": [
+        "{python}",
+        "tools/build_athena.py",
+        "--athena-root",
+        "athena-24.0",
+        "--prob",
+        "frc_merge",
+        "--jobs",
+        "4",
+        "--magnetic",
+        "--clean"
+      ]
+    },
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-athena",
+      "timeout_s": 900,
+      "cmd": [
+        "athena-24.0/bin/athena",
+        "-i",
+        "{case_dir}/inputs/athinput.a4_eb_wall_step",
+        "-d",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-a4-eb-wall",
+      "cmd": [
+        "{python}",
+        "tools/analyze_a4_eb_wall_case.py",
+        "--run-dir",
+        "{output_raw}/run",
+        "--athinput",
+        "{case_dir}/inputs/athinput.a4_eb_wall_step",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "num_outputs",
+      "op": ">=",
+      "value": 5
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "eb_mask_applied",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "wall_cells_count",
+      "op": ">",
+      "value": 0
+    },
+    {
+      "metric": "blocked_flux_faces_count",
+      "op": ">",
+      "value": 0
+    },
+    {
+      "metric": "leak_mass_frac_max",
+      "op": "<=",
+      "value": 0.01
+    },
+    {
+      "metric": "mass_rel_drift_in",
+      "op": "<=",
+      "value": 0.01
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/frc_merge.hst",
+    "{output_analysis}/metrics.json",
+    "{output_plots}/eb_mask_snapshot.png",
+    "{output_plots}/eb_mask_snapshot_step.png",
+    "{output_plots}/leak_mass_out_vs_time.png",
+    "{output_logs}/run_run-athena.log",
+    "{output_logs}/run_build-athena.log"
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "id": "m3-h3a-hybrid-merge-tilt-3d-mergev2",
+  "description": "Merge detection v2 using k-means clustering on H3a outputs.",
+  "engine": "analysis",
+  "gate_class": "hybrid_gate",
+  "physical_validity": "3d_hybrid_merge_tilt_kmeans",
+  "inputs": [
+    "../../outputs/m3-h3a-hybrid-merge-tilt-3d/raw/run/warpx_run_m3-h3a-hybrid-merge-tilt-3d.json",
+    "../../outputs/m3-h3a-hybrid-merge-tilt-3d/analysis/metrics.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-h3a-merge-kmeans",
+      "cmd": [
+        "{python}",
+        "tools/analyze_h3a_merge_tilt_case.py",
+        "--diag-dir",
+        "outputs/m3-h3a-hybrid-merge-tilt-3d/raw/run/diag",
+        "--metadata",
+        "outputs/m3-h3a-hybrid-merge-tilt-3d/raw/run/warpx_run_m3-h3a-hybrid-merge-tilt-3d.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--sep-csv",
+        "{output_analysis}/separation_series.csv",
+        "--tilt-csv",
+        "{output_analysis}/tilt_post_merge_series.csv",
+        "--merge-frac",
+        "0.25",
+        "--merge-floor-mult",
+        "0.0",
+        "--guard-outputs",
+        "2",
+        "--sep-mode",
+        "x",
+        "--merge-method",
+        "kmeans",
+        "--kmeans-max-points",
+        "50000",
+        "--kmeans-iter",
+        "10",
+        "--kmeans-threshold-frac",
+        "0.6",
+        "--kmeans-bg-quantile",
+        "10",
+        "--kmeans-min-ratio",
+        "0.2",
+        "--kmeans-warm-start",
+        "1",
+        "--kmeans-merge-criterion",
+        "inertia_ratio",
+        "--kmeans-inertia-ratio-thr",
+        "0.9",
+        "--kmeans-inertia-guard-outputs",
+        "1",
+        "--merge-persist",
+        "2"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "merge_time_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "merge_time_frac",
+      "op": "<=",
+      "value": 0.9
+    },
+    {
+      "metric": "kmeans_cluster_ratio_min",
+      "op": ">=",
+      "value": 0.2
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/separation_series.csv",
+    "{output_plots}/separation_kmeans_vs_time.png",
+    "{output_plots}/kmeans_inertia_ratio_vs_time.png",
+    "{output_plots}/merge_time_comparison.png",
+    "{output_plots}/tilt_centroid_amp_post_merge.png"
+  ]
+}

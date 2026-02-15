@@ -1,0 +1,165 @@
+{
+  "analyze": [
+    {
+      "cmd": [
+        "{python}",
+        "tools/analyze_h5_merge_tilt_gamma.py",
+        "--h3a-metrics",
+        "{output_analysis}/metrics_h3a.json",
+        "--h3b-metrics",
+        "{output_analysis}/metrics_h3b.json",
+        "--warpx-meta",
+        "{output_raw}/run/warpx_run_m17-b2-circuit-mvp-mainline-Rload20.json",
+        "--metrics-out",
+        "{output_analysis}/metrics.json"
+      ],
+      "name": "analyze-h5-merge-gamma"
+    }
+  ],
+  "artifact_policy": {
+    "archive_pass": false,
+    "prune_raw_on_fail": false,
+    "prune_raw_on_pass": false
+  },
+  "artifacts": [
+    "{output_raw}/run/warpx_run_m17-b2-circuit-mvp-mainline-Rload20.json",
+    "{output_raw}/run/particle_vel_stats.csv",
+    "{output_raw}/run/diag/reducedfiles/COIL.txt",
+    "{output_analysis}/metrics.json"
+  ],
+  "case_notes": "Circuit MVP wide R_load sweep (20 ohm): rho_cos eps=0.02, nsteps=8, diag_period=16, max_steps=513 + coil flux + RLC analysis.",
+  "description": "P2 circuit MVP wide R_load sweep (20 ohm).",
+  "engine": "warpx",
+  "gate_class": "b2_circuit_mvp_rload_wide",
+  "id": "m17-b2-circuit-mvp-mainline-Rload20",
+  "inputs": [
+    "inputs/warpx_args.json",
+    "inputs/h5_seed_config.json"
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "physical_validity": "b2_circuit_mvp_rload_wide",
+  "run": [
+    {
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ],
+      "name": "prepare-run-dir"
+    },
+    {
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=4",
+        "PYTHONPATH=pic-warpx-25.11/build-3d/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver_3d.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--init-mode",
+        "opmd_double_seed",
+        "--opmd-fluid",
+        "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/fluid_init.h5",
+        "--opmd-b",
+        "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/B_ext.h5",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--run-tag",
+        "m17-b2-circuit-mvp-mainline-Rload20"
+      ],
+      "name": "run-warpx-3d-hybrid",
+      "timeout_s": 43200
+    }
+  ],
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "tilt_seed_enabled",
+      "op": "==",
+      "value": false
+    },
+    {
+      "metric": "tilt_amp_series_len",
+      "op": ">=",
+      "value": 30
+    },
+    {
+      "metric": "r2_fit_best",
+      "op": ">=",
+      "value": 0.9
+    },
+    {
+      "metric": "merge_time_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "fit_window_found",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "fit_points",
+      "op": ">=",
+      "value": 12
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "thresholds_layers": [
+    {
+      "name": "layer1",
+      "thresholds": [
+        {
+          "metric": "ran_to_completion",
+          "op": "==",
+          "value": true
+        },
+        {
+          "metric": "tilt_seed_enabled",
+          "op": "==",
+          "value": false
+        },
+        {
+          "metric": "tilt_amp_series_len",
+          "op": ">=",
+          "value": 30
+        }
+      ]
+    },
+    {
+      "name": "layer2",
+      "thresholds": [
+        {
+          "metric": "fit_points",
+          "op": ">=",
+          "value": 24
+        },
+        {
+          "metric": "r2_fit_best",
+          "op": ">=",
+          "value": 0.9
+        }
+      ]
+    },
+    {
+      "name": "layer3",
+      "thresholds": [
+        {
+          "metric": "gamma_fit",
+          "op": ">",
+          "value": 0.0
+        }
+      ]
+    }
+  ]
+}

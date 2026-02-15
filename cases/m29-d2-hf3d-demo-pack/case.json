@@ -1,0 +1,82 @@
+{
+  "id": "m29-d2-hf3d-demo-pack",
+  "description": "Build Helion-style HF3D demo pack (single-page index + one-click playback + evidence links).",
+  "engine": "pipeline",
+  "gate_class": "hf3d_demo_pack",
+  "physical_validity": "visual_high_fidelity_3d",
+  "inputs": [
+    "../../outputs/m29-hf3d-1-merge-compression-recapture/analysis/PASSFAIL.json",
+    "../../outputs/m29-hf3d-2-formation-microinstability/analysis/PASSFAIL.json",
+    "../../outputs/m29-hf3d-3-engineering-diffusion-load/analysis/PASSFAIL.json",
+    "../../outputs/m29-d1-hf3d-suite-gate/analysis/PASSFAIL.json",
+    "../../evidence/pack/helion_mapping.yaml",
+    "../../evidence/pack/index.md"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "build-hf3d-demo-pack",
+      "cmd": [
+        "{python}",
+        "tools/build_hf3d_demo_pack.py",
+        "--merge-case",
+        "m29-hf3d-1-merge-compression-recapture",
+        "--formation-case",
+        "m29-hf3d-2-formation-microinstability",
+        "--engineering-case",
+        "m29-hf3d-3-engineering-diffusion-load",
+        "--suite-case",
+        "m29-d1-hf3d-suite-gate",
+        "--index-out",
+        "{output_analysis}/hf3d_demo_index.html",
+        "--play-script-out",
+        "{output_analysis}/play_hf3d_demo.sh",
+        "--metrics-out",
+        "{output_analysis}/metrics.json",
+        "--summary-out",
+        "{output_analysis}/hf3d_demo_pack.md"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "all_hf3d_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "all_mp4_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "demo_index_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "playback_script_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "evidence_links_written",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/hf3d_demo_pack.md",
+    "{output_analysis}/hf3d_demo_index.html",
+    "{output_analysis}/play_hf3d_demo.sh"
+  ]
+}

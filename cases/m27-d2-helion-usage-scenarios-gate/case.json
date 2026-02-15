@@ -1,0 +1,112 @@
+{
+  "id": "m27-d2-helion-usage-scenarios-gate",
+  "description": "Helion usage scenarios gate: design accelerator, shot planning, post-shot reconstruction, V&V, engineering interface, ML surrogate loop.",
+  "engine": "pipeline",
+  "gate_class": "helion_usage_scenarios",
+  "physical_validity": "engineering_usage_proxy",
+  "inputs": [
+    "../../outputs/m27-d1-helion-full-requirements-gate/analysis/PASSFAIL.json",
+    "../../outputs/m26-b2-tilt-dual-regime-gate/analysis/PASSFAIL.json",
+    "../../outputs/m26-p18-phase-compression-gate/analysis/PASSFAIL.json",
+    "../../outputs/m26-p2-circuit-load-integration/analysis/PASSFAIL.json",
+    "../../outputs/m26-d2-magnetic-load-interface/analysis/PASSFAIL.json",
+    "../../outputs/m26-a4-conductor-load-gate/analysis/PASSFAIL.json",
+    "../../outputs/m26-ml1-transport-surrogate/analysis/PASSFAIL.json",
+    "../../outputs/m26-b3-transport-closure-gate/analysis/PASSFAIL.json",
+    "../../outputs/m23-c1-historical-benchmark-belova/analysis/PASSFAIL.json",
+    "../../outputs/m22-c2-synthetic-diagnostics-mvp/analysis/PASSFAIL.json",
+    "../../outputs/m24-c3-regression-pack/analysis/PASSFAIL.json",
+    "../../outputs/p20-control-law/analysis/metrics_p20_control_law.json",
+    "../../outputs/p21-solver/analysis/metrics_p21_solver.json",
+    "../../outputs/p22-control-law/analysis/metrics_p22_control_law.json",
+    "../../outputs/p24-control-law/analysis/metrics_p24_control_law.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-usage-scenarios-gate",
+      "cmd": [
+        "{python}",
+        "tools/analyze_helion_usage_scenarios_gate.py",
+        "--full-req-case",
+        "m27-d1-helion-full-requirements-gate",
+        "--tilt-dual-case",
+        "m26-b2-tilt-dual-regime-gate",
+        "--compression-case",
+        "m26-p18-phase-compression-gate",
+        "--circuit-case",
+        "m26-p2-circuit-load-integration",
+        "--load-case",
+        "m26-d2-magnetic-load-interface",
+        "--conductor-case",
+        "m26-a4-conductor-load-gate",
+        "--surrogate-case",
+        "m26-ml1-transport-surrogate",
+        "--transport-case",
+        "m26-b3-transport-closure-gate",
+        "--benchmark-case",
+        "m23-c1-historical-benchmark-belova",
+        "--diagnostics-case",
+        "m22-c2-synthetic-diagnostics-mvp",
+        "--regression-case",
+        "m24-c3-regression-pack",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/helion_usage_scenarios.md",
+        "--matrix",
+        "{output_analysis}/helion_usage_scenarios_matrix.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "design_accelerator_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "shot_planning_param_scan_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "post_shot_reconstruction_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "vv_calibration_validation_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "engineering_interface_outputs_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "ml_surrogate_closed_loop_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "all_usage_scenarios_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/helion_usage_scenarios.md",
+    "{output_analysis}/helion_usage_scenarios_matrix.csv"
+  ]
+}

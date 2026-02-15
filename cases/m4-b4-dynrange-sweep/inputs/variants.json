@@ -1,0 +1,9 @@
+{
+  "control": "m4-b4-dynrange-control",
+  "floor_only": "m4-b4-dynrange-floor",
+  "substeps_only": "m4-b4-dynrange-substeps",
+  "treatment": "m4-b4-dynrange-both",
+  "min_outputs": 6,
+  "energy_drift_margin": 0.05,
+  "energy_drift_cap": 0.2
+}

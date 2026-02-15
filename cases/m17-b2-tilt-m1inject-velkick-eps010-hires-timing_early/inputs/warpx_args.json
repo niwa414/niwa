@@ -1,0 +1,43 @@
+{
+  "diag_fields": [
+    "rho"
+  ],
+  "diag_period": 1,
+  "drop_threshold": 100,
+  "dt": 5e-12,
+  "enable_m1mom_diag": false,
+  "enable_m1rho_diag": false,
+  "hybrid": {
+    "Te_eV": 10.0,
+    "enabled": true,
+    "eta": 1e-06,
+    "gamma": 1.6666666667,
+    "n0": 1e+19,
+    "nfloor_scale": 0.05,
+    "substeps": 4
+  },
+  "init_mode": "opmd_double_seed",
+  "m1_inject_dry_run": false,
+  "max_steps": 64,
+  "metadata_heartbeat_s": 30.0,
+  "monitor_interval": 1,
+  "monitor_species": "ions",
+  "nx": 32,
+  "ny": 32,
+  "nz": 64,
+  "opmd_max_beta": 0.95,
+  "opmd_ppc": 1,
+  "opmd_use_fluid_velocity": true,
+  "opmd_vel_scale": 1.0,
+  "opmd_weight_scale": 1.0,
+  "ppc": 1,
+  "seed": 42,
+  "seed_config_path": "h5_seed_config.json",
+  "x_max": 1.0,
+  "x_min": -1.0,
+  "y_max": 1.0,
+  "y_min": -1.0,
+  "z_max": 2.0,
+  "z_min": -2.0,
+  "ext_drive_start_step": 0
+}

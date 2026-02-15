@@ -1,0 +1,79 @@
+{
+  "id": "m23-b3-electron-energy-stage2-closure",
+  "description": "B3 Stage2 strict closure: electron energy equation balance and Te scaling from coupled on/off runs.",
+  "engine": "pipeline",
+  "gate_class": "b3_stage2_closure",
+  "physical_validity": "b3_electron_energy_closure",
+  "inputs": [
+    "../../outputs/m5-b3-1-electron-energy-coupled-on/raw/run/warpx_run_m5-b3-1-electron-energy-coupled-on.json",
+    "../../outputs/m5-b3-1-electron-energy-coupled-off/raw/run/warpx_run_m5-b3-1-electron-energy-coupled-off.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b3-energy-closure",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b3_energy_closure.py",
+        "--on-meta",
+        "outputs/m5-b3-1-electron-energy-coupled-on/raw/run/warpx_run_m5-b3-1-electron-energy-coupled-on.json",
+        "--off-meta",
+        "outputs/m5-b3-1-electron-energy-coupled-off/raw/run/warpx_run_m5-b3-1-electron-energy-coupled-off.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/closure_summary.json",
+        "--min-records",
+        "40",
+        "--max-balance-err",
+        "1e-10",
+        "--min-te-range",
+        "0.5",
+        "--max-corr",
+        "-0.8"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "electron_energy_records",
+      "op": ">=",
+      "value": 40
+    },
+    {
+      "metric": "electron_energy_records_off",
+      "op": ">=",
+      "value": 40
+    },
+    {
+      "metric": "electron_energy_balance_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "te_scaling_observed",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "known_gaps": [],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/closure_summary.json"
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": "m1-b2-tilt-smoke-3d",
+  "description": "Tiny 3D non-hybrid tilt smoke (cartesian).",
+  "engine": "warpx",
+  "gate_class": "physics_gate",
+  "physical_validity": "3d_non_hybrid",
+  "inputs": [
+    "inputs/warpx_args.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx-3d",
+      "timeout_s": 1800,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-3d/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver_3d.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--run-tag",
+        "m1-b2-tilt-smoke-3d"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-tilt-3d",
+      "cmd": [
+        "{python}",
+        "tools/analyze_warpx_tilt_3d_case.py",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--metadata",
+        "{output_raw}/run/warpx_run_m1-b2-tilt-smoke-3d.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--csv",
+        "{output_analysis}/centroid_series.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "num_outputs",
+      "op": ">=",
+      "value": 5
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "drop_breach",
+      "op": "==",
+      "value": false
+    },
+    {
+      "metric": "tilt_amp_ratio",
+      "op": ">=",
+      "value": 1.2
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/warpx_run_m1-b2-tilt-smoke-3d.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/centroid_series.csv",
+    "{output_plots}/tilt_centroid_amp_vs_time.png",
+    "{output_plots}/tilt_centroid_xy_path.png",
+    "{output_plots}/energy_budget_vs_time.png",
+    "{output_plots}/density_snapshot.png"
+  ]
+}

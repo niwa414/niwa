@@ -1,0 +1,91 @@
+# Belova B2: merging + mirror compression (2D MHD + 2D hybrid)
+# Purpose: replicate arXiv:2501.03425 "merging + compression" with a time-dependent end mirror (mirror ratio ~1.5).
+meta:
+  id: belova_b2_compression
+  description: >
+    Two FRCs merge in an axisymmetric cylinder while an end-mirror field ramps up (mirror ratio ~1.5).
+    Used as a direct Trenta-relevant benchmark: compression tends to improve merge quality and speed.
+  references:
+    - Belova2025_arXiv_2501_03425
+geometry:
+  type: cylinder
+  r_max: 0.25
+  z_span: 0.50
+  wall_bc: conducting
+fields:
+  # External-field implementation in WarpX is recommended via basis superposition:
+  #   B_ext(r,z,t) = c_bias(t) * B_bias(r,z) + c_delta(t) * (B_mirror(r,z) - B_bias(r,z))
+  # This makes it easy to ramp the *mirror ratio* while holding a constant bias.
+  #
+  # Basis files can be generated with:
+  #   python warpx-driver/export_b_opmd_from_vtk.py --mode uniform --Bz-const 1.0 ...
+  #   python warpx-driver/export_b_opmd_from_vtk.py --mode mirror-delta --Bz-center 1.0 --mirror-ratio 1.5 ...
+  external_basis:
+    - name: bias
+      bfile: warpx-driver/B_basis_belova_b2_bias.h5
+      generator:
+        mode: uniform
+        Bz_const: 1.0
+      coeff_const: 0.05   # T (static bias/guide)
+    - name: mirror_delta
+      bfile: warpx-driver/B_basis_belova_b2_mirror_delta.h5
+      generator:
+        mode: mirror-delta
+        Bz_center: 1.0
+        mirror_ratio: 1.5
+      coeff_waveform_csv: scenes/belova_b2_mirror_ramp.csv  # (t,frac); use coeff_scale to set Tesla amplitude
+      coeff_column: frac
+      coeff_scale: 0.05   # T (final delta coefficient; gives mirror ratio ~1.5 when bias=0.05T)
+  induced_E: true
+mesh:
+  athena:
+    nr: 192
+    nz: 384
+    cfl: 0.4
+    vtk_dt: 1.5e-7
+    hst_dt: 7.5e-8
+  warpx:
+    nr: 128
+    nz: 256
+    dt: 4.0e-12
+    diag_period: 10
+    n_azimuthal_modes: 1
+plasma:
+  species:
+    - name: D
+      A: 2.0
+      Z: 1.0
+      n0: 2.0e19
+      Te0: 80.0
+      Ti0: 120.0
+  frc_pair:
+    beta_s: 0.15
+    separation: 0.20
+    length: 0.12
+    radius: 0.06
+    vz: 1.5e5
+transport:
+  model: resistive_mhd
+  eta_const: 5.0e-6
+  hall_term: true
+hybrid:
+  enable: true
+  n_floor_scale: 0.05
+  substeps: 1
+  eta: 0.0
+  gamma: 1.6666666667
+export:
+  r_min: 0.0
+  r_max: 0.25
+  z_min: -0.25
+  z_max: 0.25
+  nr: 128
+  nz: 256
+diagnostics:
+  warpx:
+    monitor_interval: 10
+    drop_threshold: 500
+  derived:
+    - merge_time_tauA
+    - merge_success
+    - rs_E_evolution

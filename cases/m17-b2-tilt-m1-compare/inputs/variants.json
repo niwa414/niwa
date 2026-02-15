@@ -1,0 +1,7 @@
+{
+  "tilt_on": "m17-b2-tilt-m1inject-rhocos-eps002-mainline-r2",
+  "tilt_off": "m17-b2-tilt-m1inject-rhocos-eps000-mainline-r2",
+  "gamma_ratio_min": 2.0,
+  "r2_m1_min": 0.9,
+  "m1_len_min": 24
+}

@@ -1,0 +1,95 @@
+{
+  "id": "m4-a3-closed-loop-circuit-gate",
+  "description": "A3 closed-loop circuit gate using LCR with online plasma-radius feedback.",
+  "engine": "warpx",
+  "gate_class": "circuit_gate",
+  "physical_validity": "a3_closed_loop_gate",
+  "inputs": [
+    "inputs/warpx_args.json",
+    "../../warpx-driver/B_ext_smoke.h5"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx",
+      "timeout_s": 1200,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-rz/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--run-tag",
+        "m4-a3-closed-loop-circuit-gate"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-a3-closed-loop",
+      "cmd": [
+        "{python}",
+        "tools/analyze_a3_closed_loop_case.py",
+        "--metadata",
+        "{output_raw}/run/warpx_run_m4-a3-closed-loop-circuit-gate.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--lcr-csv",
+        "{output_analysis}/lcr_history.csv",
+        "--feedback-csv",
+        "{output_analysis}/feedback_series.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "closed_loop_enabled",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "feedback_signal_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "feedback_update_count",
+      "op": ">=",
+      "value": 10
+    },
+    {
+      "metric": "feedback_signal_std",
+      "op": ">",
+      "value": 0.0
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/warpx_run_m4-a3-closed-loop-circuit-gate.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/lcr_history.csv",
+    "{output_analysis}/feedback_series.csv",
+    "{output_plots}/lcr_current_vs_time.png",
+    "{output_plots}/feedback_vs_rplasma.png"
+  ]
+}

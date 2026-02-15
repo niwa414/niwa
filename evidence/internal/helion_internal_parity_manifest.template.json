@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "updated_at_utc": "1970-01-01T00:00:00Z",
+  "gpu_runtime_proof": {
+    "enabled": false,
+    "binding_id": "gpu-runtime-proof-example",
+    "source_path": "outputs/example-gpu-run/logs/warpx_gpu.log",
+    "source_sha256": "<sha256>",
+    "runtime_token_regex": "CUDA runtime|AMReX.*CUDA|HIP runtime|SYCL runtime",
+    "min_match_count": 1,
+    "notes": "Must point to a real GPU runtime log artifact."
+  },
+  "private_shot_dataset_binding": {
+    "enabled": false,
+    "binding_id": "private-shot-dataset-example",
+    "dataset_path": "outputs/private/shot_dataset_bundle.tar.zst",
+    "dataset_sha256": "<sha256>",
+    "calibration_report_path": "outputs/private/shot_dataset_calibration_report.md",
+    "calibration_report_sha256": "<sha256>",
+    "notes": "Use immutable dataset + report artifacts."
+  },
+  "private_hardware_model_binding": {
+    "enabled": false,
+    "binding_id": "private-hardware-model-example",
+    "model_path": "outputs/private/hardware_model_bundle.tar.zst",
+    "model_sha256": "<sha256>",
+    "validation_report_path": "outputs/private/hardware_model_validation_report.md",
+    "validation_report_sha256": "<sha256>",
+    "notes": "Use immutable hardware model + validation artifacts."
+  }
+}

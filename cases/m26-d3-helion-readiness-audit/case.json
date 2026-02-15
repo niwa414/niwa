@@ -1,0 +1,75 @@
+{
+  "id": "m26-d3-helion-readiness-audit",
+  "description": "P0/P1 Helion-style readiness audit and gap backlog from current evidence map.",
+  "engine": "pipeline",
+  "gate_class": "d2_helion_readiness_audit",
+  "physical_validity": "roadmap_audit",
+  "inputs": [
+    "../../evidence/pack/helion_mapping.yaml"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_analysis}"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-helion-readiness",
+      "cmd": [
+        "{python}",
+        "tools/analyze_helion_readiness.py",
+        "--mapping",
+        "evidence/pack/helion_mapping.yaml",
+        "--outputs-root",
+        "outputs",
+        "--out-json",
+        "{output_analysis}/helion_readiness.json",
+        "--out-md",
+        "{output_analysis}/helion_readiness.md",
+        "--out-backlog",
+        "{output_analysis}/helion_gap_backlog.md",
+        "--metrics-out",
+        "{output_analysis}/metrics.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "report_generated",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "dimensions_total",
+      "op": ">=",
+      "value": 8
+    },
+    {
+      "metric": "p0_total",
+      "op": ">=",
+      "value": 4
+    },
+    {
+      "metric": "p1_total",
+      "op": ">=",
+      "value": 4
+    },
+    {
+      "metric": "evidence_cases_scanned",
+      "op": ">=",
+      "value": 20
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/helion_readiness.json",
+    "{output_analysis}/helion_readiness.md",
+    "{output_analysis}/helion_gap_backlog.md"
+  ]
+}

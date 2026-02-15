@@ -1,0 +1,88 @@
+{
+  "id": "m29-hf3d-3-engineering-diffusion-load",
+  "description": "HF3D animation #3: eddy-current proxy, magnetic diffusion, and engineering load interface in 3D.",
+  "engine": "pipeline",
+  "gate_class": "hf3d_animation_engineering_diffusion_load",
+  "physical_validity": "visual_high_fidelity_3d",
+  "inputs": [
+    "../../outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/diag/diag1000000/Header",
+    "../../outputs/m26-d2-magnetic-load-interface/analysis/magnetic_load_series.csv",
+    "../../outputs/m28-s3-em-diffusion-nonproxy-gate/analysis/metrics.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "render-hf3d-engineering",
+      "cmd": [
+        "{python}",
+        "tools/render_hf3d_engineering_diffusion_load.py",
+        "--diag-dir",
+        "outputs/m9-h4-1-mhd-seeded-hybrid-3d-rotation/raw/run/diag",
+        "--load-series",
+        "outputs/m26-d2-magnetic-load-interface/analysis/magnetic_load_series.csv",
+        "--diffusion-metrics",
+        "outputs/m28-s3-em-diffusion-nonproxy-gate/analysis/metrics.json",
+        "--max-frames",
+        "20",
+        "--point-budget",
+        "12000",
+        "--fps",
+        "10",
+        "--mp4-out",
+        "{output_plots}/engineering_diffusion_load_3d.mp4",
+        "--gif-out",
+        "{output_plots}/engineering_diffusion_load_3d.gif",
+        "--metrics-out",
+        "{output_analysis}/metrics.json",
+        "--summary-out",
+        "{output_analysis}/hf3d_engineering.md"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "frames_rendered",
+      "op": ">=",
+      "value": 8
+    },
+    {
+      "metric": "diffusion_metrics_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "load_series_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "diffusion_activation_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "etaj2_scaling_ok",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "render_success",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/hf3d_engineering.md",
+    "{output_plots}/engineering_diffusion_load_3d.mp4",
+    "{output_plots}/engineering_diffusion_load_3d.gif"
+  ]
+}

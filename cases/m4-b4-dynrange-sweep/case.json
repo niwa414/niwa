@@ -1,0 +1,55 @@
+{
+  "id": "m4-b4-dynrange-sweep",
+  "description": "B4 dynamic range strategy sweep (floor/substeps on-off).",
+  "engine": "pipeline",
+  "gate_class": "b4_sweep",
+  "physical_validity": "dynrange_sweep_gate",
+  "inputs": [
+    "inputs/variants.json"
+  ],
+  "run": [
+    {
+      "name": "run-b4-variants",
+      "cmd": [
+        "{python}",
+        "tools/run_b4_sweep.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--stage",
+        "all"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b4-sweep",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b4_sweep.py",
+        "--variants",
+        "{case_dir}/inputs/variants.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/variant_summary.json",
+        "--plots-dir",
+        "{output_plots}"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "sweep_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/variant_summary.json",
+    "{output_plots}/min_density_vs_time.png",
+    "{output_plots}/energy_drift_compare.png",
+    "{output_plots}/drop_breach_flags.png"
+  ]
+}

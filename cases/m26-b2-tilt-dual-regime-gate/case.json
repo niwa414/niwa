@@ -1,0 +1,110 @@
+{
+  "id": "m26-b2-tilt-dual-regime-gate",
+  "description": "B2 dual-regime gate: explicit growth + damping + 2x2 seed/drift sensitivity.",
+  "engine": "pipeline",
+  "gate_class": "b2_dual_regime",
+  "physical_validity": "b2_dual_regime",
+  "inputs": [
+    "../../outputs/m17-b2-tilt-growth-baseline/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-tilt-m1-compare/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-tilt-seedON-driftON-rhocosE002-N008-mainline/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-tilt-seedON-driftOFF-rhocosE002-N008-mainline/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-tilt-seedOFF-driftON-rhocosE002-N008-mainline/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-tilt-seedOFF-driftOFF-rhocosE002-N008-mainline/analysis/PASSFAIL.json"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-b2-dual-regime",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b2_dual_regime_gate.py",
+        "--growth-case",
+        "m17-b2-tilt-growth-baseline",
+        "--damping-case",
+        "m17-b2-tilt-m1-compare",
+        "--seed-drift-cases",
+        "m17-b2-tilt-seedON-driftON-rhocosE002-N008-mainline",
+        "m17-b2-tilt-seedON-driftOFF-rhocosE002-N008-mainline",
+        "m17-b2-tilt-seedOFF-driftON-rhocosE002-N008-mainline",
+        "m17-b2-tilt-seedOFF-driftOFF-rhocosE002-N008-mainline",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/dual_regime_summary.md",
+        "--table",
+        "{output_analysis}/seed_drift_gamma_table.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "growth_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "damping_case_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "seed_drift_suite_size",
+      "op": ">=",
+      "value": 4
+    },
+    {
+      "metric": "seed_drift_suite_complete",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "growth_gamma_positive",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "damping_gamma_negative",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "seed_drift_all_negative",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "seed_drift_r2_all_good",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "seed_drift_span_rel",
+      "op": "<=",
+      "value": 0.2
+    },
+    {
+      "metric": "sensitivity_table_present",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "dual_regime_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/dual_regime_summary.md",
+    "{output_analysis}/seed_drift_gamma_table.csv"
+  ]
+}

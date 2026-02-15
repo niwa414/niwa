@@ -1,0 +1,152 @@
+{
+  "id": "m3-h3a-hybrid-merge-tilt-3d",
+  "description": "3D Hybrid-PIC merge completion + post-merge tilt extraction gate.",
+  "engine": "warpx",
+  "gate_class": "hybrid_gate",
+  "physical_validity": "3d_hybrid_merge_tilt",
+  "inputs": [
+    "inputs/warpx_args.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-warpx-3d-hybrid",
+      "timeout_s": 2400,
+      "cmd": [
+        "env",
+        "OMP_NUM_THREADS=1",
+        "PYTHONPATH=pic-warpx-25.11/build-3d/lib/site-packages",
+        "{python}",
+        "warpx-driver/warpx_driver_3d.py",
+        "--from-json",
+        "{case_dir}/inputs/warpx_args.json",
+        "--metadata-dir",
+        "{output_raw}/run",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--run-tag",
+        "m3-h3a-hybrid-merge-tilt-3d"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-h3a-merge-tilt",
+      "cmd": [
+        "{python}",
+        "tools/analyze_h3a_merge_tilt_case.py",
+        "--diag-dir",
+        "{output_raw}/run/diag",
+        "--metadata",
+        "{output_raw}/run/warpx_run_m3-h3a-hybrid-merge-tilt-3d.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--sep-csv",
+        "{output_analysis}/separation_series.csv",
+        "--tilt-csv",
+        "{output_analysis}/tilt_post_merge_series.csv",
+        "--merge-frac",
+        "0.25",
+        "--merge-floor-mult",
+        "1.7",
+        "--guard-outputs",
+        "2",
+        "--sep-mode",
+        "x",
+        "--merge-method",
+        "kmeans",
+        "--kmeans-max-points",
+        "50000",
+        "--kmeans-iter",
+        "10",
+        "--kmeans-threshold-frac",
+        "0.6",
+        "--kmeans-bg-quantile",
+        "10",
+        "--kmeans-min-ratio",
+        "0.2",
+        "--kmeans-warm-start",
+        "1",
+        "--kmeans-merge-criterion",
+        "inertia_ratio",
+        "--kmeans-inertia-ratio-thr",
+        "0.9",
+        "--kmeans-inertia-guard-outputs",
+        "1",
+        "--merge-persist",
+        "2"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "num_outputs",
+      "op": ">=",
+      "value": 8
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "drop_breach",
+      "op": "==",
+      "value": false
+    },
+    {
+      "metric": "merge_time_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "merge_time_frac",
+      "op": "<=",
+      "value": 0.9
+    },
+    {
+      "metric": "tilt_post_merge_samples",
+      "op": ">=",
+      "value": 5
+    },
+    {
+      "metric": "tilt_post_merge_amp_max",
+      "op": ">",
+      "value": 0.0
+    },
+    {
+      "metric": "tilt_post_merge_no_nan",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/warpx_run_m3-h3a-hybrid-merge-tilt-3d.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/separation_series.csv",
+    "{output_analysis}/tilt_post_merge_series.csv",
+    "{output_plots}/separation_vs_time.png",
+    "{output_plots}/separation_kmeans_vs_time.png",
+    "{output_plots}/kmeans_inertia_ratio_vs_time.png",
+    "{output_plots}/merge_time_comparison.png",
+    "{output_plots}/centroid_paths_two_blobs.png",
+    "{output_plots}/tilt_centroid_amp_post_merge.png",
+    "{output_plots}/energy_budget_vs_time.png",
+    "{output_plots}/density_snapshot.png"
+  ]
+}

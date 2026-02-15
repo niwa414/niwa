@@ -1,0 +1,85 @@
+{
+  "id": "m28-s2-stability-nonproxy-gate",
+  "description": "Non-proxy stability gate using direct reduced modal diagnostics (M1RHO/M1MOM) plus dual-regime envelope checks.",
+  "engine": "pipeline",
+  "gate_class": "stability_nonproxy",
+  "physical_validity": "direct_modal_diagnostics",
+  "inputs": [
+    "../../outputs/m26-b2-tilt-dual-regime-gate/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-tilt-m1inject-velkick-eps000/raw/run/diags/reducedfiles/M1RHO.txt",
+    "../../outputs/m17-b2-tilt-m1inject-velkick-eps000/raw/run/diags/reducedfiles/M1MOM.txt"
+  ],
+  "run": [
+    {
+      "name": "noop",
+      "cmd": [
+        "true"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-stability-nonproxy",
+      "cmd": [
+        "{python}",
+        "tools/analyze_stability_nonproxy.py",
+        "--dual-case",
+        "m26-b2-tilt-dual-regime-gate",
+        "--modal-cases",
+        "m17-b2-tilt-m1inject-velkick-eps000",
+        "--min-samples",
+        "10",
+        "--min-mom-gamma",
+        "1.0e8",
+        "--max-rho-abs-gamma",
+        "1.0e7",
+        "--min-dominance",
+        "100.0",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--summary",
+        "{output_analysis}/stability_nonproxy.md",
+        "--table",
+        "{output_analysis}/modal_stability_table.csv"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "dual_regime_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "modal_cases_usable",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "shearing_gamma_min",
+      "op": ">",
+      "value": 100000000.0
+    },
+    {
+      "metric": "interchange_abs_gamma_max",
+      "op": "<=",
+      "value": 10000000.0
+    },
+    {
+      "metric": "shearing_dominance_min",
+      "op": ">=",
+      "value": 100.0
+    },
+    {
+      "metric": "stability_nonproxy_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/stability_nonproxy.md",
+    "{output_analysis}/modal_stability_table.csv"
+  ]
+}

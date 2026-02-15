@@ -1,0 +1,81 @@
+{
+  "id": "m24-c3-regression-pack",
+  "description": "C3 five-case regression pack with restart-consistency hard gate.",
+  "engine": "pipeline",
+  "gate_class": "c3_regression_pack",
+  "physical_validity": "pipeline_regression",
+  "inputs": [
+    "../../cases/m15-a4-eb-movingwall-short/case.json",
+    "../../cases/m19-b2-3d-driver-stage1-gate60/case.json",
+    "../../cases/m20-b2-3d-driver-stage2-gate80-dense/case.json",
+    "../../cases/m21-b2-3d-driver-stage3-integration/case.json",
+    "../../cases/m25-b5-restart-metadata-consistency/case.json"
+  ],
+  "run": [
+    {
+      "name": "run-regression-pack",
+      "cmd": [
+        "{python}",
+        "tools/run_regression_pack.py",
+        "--stage",
+        "analyze",
+        "--out-dir",
+        "{output_analysis}"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-regression-pack",
+      "cmd": [
+        "{python}",
+        "tools/analyze_regression_pack.py",
+        "--summary",
+        "{output_analysis}/regression_pack_summary.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--details",
+        "{output_analysis}/regression_pack_details.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "num_cases",
+      "op": ">=",
+      "value": 5
+    },
+    {
+      "metric": "pass_count",
+      "op": "==",
+      "value": 5
+    },
+    {
+      "metric": "fail_count",
+      "op": "==",
+      "value": 0
+    },
+    {
+      "metric": "all_run_rc_zero",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "restart_consistency_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "regression_pack_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "artifacts": [
+    "{output_analysis}/regression_pack_summary.json",
+    "{output_analysis}/regression_pack_summary.md",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/regression_pack_details.json"
+  ]
+}

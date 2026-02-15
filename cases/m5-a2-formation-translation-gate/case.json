@@ -1,0 +1,159 @@
+{
+  "id": "m5-a2-formation-translation-gate",
+  "description": "A2 formation + translation gate using Hall-MHD frc_merge with axial bulk drift.",
+  "engine": "athena",
+  "gate_class": "a2_gate",
+  "physical_validity": "limited",
+  "inputs": [
+    "inputs/athinput.a2_form_trans_gate"
+  ],
+  "run": [
+    {
+      "name": "build-athena",
+      "timeout_s": 600,
+      "cmd": [
+        "{python}",
+        "tools/build_athena.py",
+        "--athena-root",
+        "athena-24.0",
+        "--prob",
+        "frc_merge",
+        "--jobs",
+        "4",
+        "--magnetic",
+        "--clean",
+        "--force"
+      ]
+    },
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-athena",
+      "timeout_s": 900,
+      "cmd": [
+        "athena-24.0/bin/athena",
+        "-i",
+        "{case_dir}/inputs/athinput.a2_form_trans_gate",
+        "-d",
+        "{output_raw}/run"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-a2-form-trans",
+      "cmd": [
+        "{python}",
+        "tools/analyze_a2_form_trans_case.py",
+        "--run-dir",
+        "{output_raw}/run",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--plots-dir",
+        "{output_plots}",
+        "--formation-contrast-threshold",
+        "1.3",
+        "--formation-persist",
+        "2",
+        "--psi-peak-to-edge-threshold",
+        "0.8",
+        "--psi-eps-frac",
+        "0.001"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "artifact_policy": {
+    "prune_raw_on_pass": false
+  },
+  "thresholds": [
+    {
+      "metric": "ran_to_completion",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "num_outputs",
+      "op": ">=",
+      "value": 10
+    },
+    {
+      "metric": "no_nan_in_metrics",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "frc_formed",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "formation_time_frac",
+      "op": "<=",
+      "value": 0.1
+    },
+    {
+      "metric": "psi_closed_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "psi_closed_persist_outputs",
+      "op": ">=",
+      "value": 3
+    },
+    {
+      "metric": "psi_peak_to_edge_max",
+      "op": ">=",
+      "value": 0.8
+    },
+    {
+      "metric": "centroid_shift_abs",
+      "op": ">=",
+      "value": 0.05
+    },
+    {
+      "metric": "translation_monotonic_run",
+      "op": ">=",
+      "value": 3
+    },
+    {
+      "metric": "peak_rho_ratio_end",
+      "op": ">=",
+      "value": 0.5
+    },
+    {
+      "metric": "divB_rel",
+      "op": "<=",
+      "value": 0.001
+    },
+    {
+      "metric": "mass_rel_drift",
+      "op": "<=",
+      "value": 0.05
+    },
+    {
+      "metric": "total_energy_rel_drift",
+      "op": "<=",
+      "value": 0.2
+    }
+  ],
+  "artifacts": [
+    "{output_raw}/run/frc_merge.hst",
+    "{output_analysis}/metrics.json",
+    "{output_plots}/psi_indicator_vs_time.png",
+    "{output_plots}/psi_contours_snapshot.png",
+    "{output_plots}/density_contrast_vs_time.png",
+    "{output_plots}/centroid_z_vs_time.png",
+    "{output_plots}/snapshot_pre_post.png",
+    "{output_plots}/divb_vs_time.png",
+    "{output_logs}/run_run-athena.log",
+    "{output_logs}/run_build-athena.log"
+  ]
+}

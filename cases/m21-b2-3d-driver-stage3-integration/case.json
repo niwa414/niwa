@@ -1,0 +1,94 @@
+{
+  "id": "m21-b2-3d-driver-stage3-integration",
+  "description": "B2 stage3 integration gate: stage1 + stage2-transition + tilt 2x2 evidence closure.",
+  "engine": "pipeline",
+  "gate_class": "b2_3d_driver_stage3",
+  "physical_validity": "limited",
+  "inputs": [
+    "../../outputs/m19-b2-3d-driver-stage1-gate60/analysis/metrics.json",
+    "../../outputs/m20-b2-3d-driver-stage2-gate80-dense/analysis/metrics.json",
+    "../../outputs/m17-b2-tilt-seedON-driftON-rhocosE002-N008-mainline/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-tilt-seedON-driftOFF-rhocosE002-N008-mainline/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-tilt-seedOFF-driftON-rhocosE002-N008-mainline/analysis/PASSFAIL.json",
+    "../../outputs/m17-b2-tilt-seedOFF-driftOFF-rhocosE002-N008-mainline/analysis/PASSFAIL.json"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-stage3-integration",
+      "cmd": [
+        "{python}",
+        "tools/run_b2_3d_driver_stage3.py",
+        "--output-root",
+        "{output_raw}/run",
+        "--stage1-metrics",
+        "outputs/m19-b2-3d-driver-stage1-gate60/analysis/metrics.json",
+        "--stage2-metrics",
+        "outputs/m20-b2-3d-driver-stage2-gate80-dense/analysis/metrics.json",
+        "--tilt-cases",
+        "m17-b2-tilt-seedON-driftON-rhocosE002-N008-mainline",
+        "m17-b2-tilt-seedON-driftOFF-rhocosE002-N008-mainline",
+        "m17-b2-tilt-seedOFF-driftON-rhocosE002-N008-mainline",
+        "m17-b2-tilt-seedOFF-driftOFF-rhocosE002-N008-mainline"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-stage3-integration",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b2_3d_driver_stage3.py",
+        "--summary",
+        "{output_raw}/run/stage3_summary.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--details",
+        "{output_analysis}/stage3_details.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "stage1_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "stage2_transition_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "tilt_matrix_all_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "tilt_gamma_all_negative",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "stage3_ready",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "known_gaps": [
+    "b2_3d_stage2_strict_gate_not_closed"
+  ],
+  "artifacts": [
+    "{output_raw}/run/stage3_summary.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/stage3_details.json"
+  ]
+}

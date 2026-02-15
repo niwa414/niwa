@@ -1,0 +1,92 @@
+{
+  "id": "m18-b2-3d-driver-stage0",
+  "description": "B2 3D driver stage0 suite (GS->3D mapping + EMF smoke + moving-wall smoke).",
+  "engine": "pipeline",
+  "gate_class": "b2_3d_driver_stage0",
+  "physical_validity": "limited",
+  "inputs": [
+    "../../athena-24.0/inputs/mhd/athinput.belova_b2_gs_emf_mwall3d_smoke",
+    "../../athena-24.0/inputs/mhd/athinput.belova_b2_gs_emf_mwall80_smooth",
+    "../../scenes/belova_b2_mirror_ramp_smooth.csv"
+  ],
+  "run": [
+    {
+      "name": "prepare-run-dir",
+      "cmd": [
+        "mkdir",
+        "-p",
+        "{output_raw}/run"
+      ]
+    },
+    {
+      "name": "run-stage0-suite",
+      "timeout_s": 3600,
+      "cmd": [
+        "{python}",
+        "tools/run_b2_3d_driver_stage0.py",
+        "--output-root",
+        "{output_raw}/run",
+        "--athena-bin",
+        "athena-24.0/bin/athena",
+        "--smoke-input",
+        "athena-24.0/inputs/mhd/athinput.belova_b2_gs_emf_mwall3d_smoke",
+        "--gs-athinput",
+        "athena-24.0/inputs/mhd/athinput.belova_b2_gs_emf_mwall80_smooth",
+        "--waveform",
+        "scenes/belova_b2_mirror_ramp_smooth.csv"
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "name": "analyze-stage0-suite",
+      "cmd": [
+        "{python}",
+        "tools/analyze_b2_3d_driver_stage0.py",
+        "--summary",
+        "{output_raw}/run/stage0_summary.json",
+        "--metrics",
+        "{output_analysis}/metrics.json",
+        "--details",
+        "{output_analysis}/stage0_details.json"
+      ]
+    }
+  ],
+  "metrics_file": "{output_analysis}/metrics.json",
+  "thresholds": [
+    {
+      "metric": "init_h5_exists",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "stage_3d0a_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "stage_3d0b_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "stage_3d0c_pass",
+      "op": "==",
+      "value": true
+    },
+    {
+      "metric": "stage0_suite_pass",
+      "op": "==",
+      "value": true
+    }
+  ],
+  "known_gaps": [
+    "b2_3d_stage1_gate60_not_included",
+    "b2_3d_stage2_gate80_not_included"
+  ],
+  "artifacts": [
+    "{output_raw}/run/stage0_summary.json",
+    "{output_analysis}/metrics.json",
+    "{output_analysis}/stage0_details.json"
+  ]
+}

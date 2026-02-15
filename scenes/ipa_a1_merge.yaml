@@ -1,0 +1,71 @@
+# IPA A1: IPA device, two FRCs merge in collision chamber, no compression (Moqui 2011 baseline)
+# Purpose: validate time-dependent external fields + FRC trajectory/flux exclusion against Slough 2011.
+meta:
+  id: ipa_a1_merge
+  description: >
+    IPA collision-chamber run with two counter-propagating FRCs; bias/mirror fields applied,
+    no post-merge compression. Axial velocity ~2.5e5 m/s, chamber radius ~0.14 m.
+  references:
+    - Slough2011_NF_51_053008
+geometry:
+  type: cylinder
+  r_max: 0.16          # m, slightly above 0.14 m tube radius for buffer
+  z_span: 0.35         # m, covers ~0.3 m collision chamber + margins
+  wall_bc: conducting
+  mirror:
+    bz_mirror: 0.2     # T, end mirrors
+    extent: 0.05       # m axial half-extent of each mirror section
+fields:
+  bias_Bz: 0.12        # T, reverse bias in chamber
+  coil_waveform_csv: outputs/analysis/ipa_waveform.csv  # placeholder; replace with measured/engineered coil current trace
+mesh:
+  athena:
+    nr: 192
+    nz: 384
+    cfl: 0.4
+    vtk_dt: 2.0e-7     # s
+    hst_dt: 1.0e-7     # s
+  warpx:
+    nr: 128
+    nz: 256
+    dt: 5.0e-12        # s (Yee CFL-safe for dr~1.25e-3, dz~1.37e-3)
+    diag_period: 10
+    n_azimuthal_modes: 1
+plasma:
+  species:
+    - name: D
+      A: 2.0
+      Z: 1.0
+      n0: 2.5e19      # m^-3 core peak per FRC (adjust to match flux exclusion)
+      Te0: 100.0      # eV
+      Ti0: 150.0      # eV
+  frc_pair:
+    separation: 0.18  # m between centroids at t=0
+    length: 0.12      # m axial half-length of each FRC core
+    radius: 0.06      # m separatrix radius
+    vz: 2.5e5         # m/s toward center (matches 210–300 km/s range)
+    tilt_eps: 0.0
+transport:
+  model: resistive_mhd
+  eta_const: 1.0e-5   # Ohm-m, piecewise/temperature model can replace
+  hall_term: false
+export:
+  r_min: 0.0
+  r_max: 0.16
+  z_min: -0.175
+  z_max: 0.175
+  nr: 128
+  nz: 256
+diagnostics:
+  athena:
+    vtk_stride: 1
+    hst: true
+  warpx:
+    monitor_interval: 10
+    drop_threshold: 500
+    mode_metrics: [rho, Bz]
+  derived:
+    - excluded_flux          # compare to experiment: peak exclusion ~4x single-FRC on merge
+    - frc_centroid           # axial position vs time
+    - radius_length          # separatrix rs, length E
+    - energy_budget          # cap/inductor vs ∫B^2/2μ0 (post-process)
