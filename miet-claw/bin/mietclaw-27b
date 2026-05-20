@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-set -eu
-
-export MIETCLAW_LOCAL_MODEL="${MIETCLAW_LOCAL_MODEL:-27b}"
-SCRIPT_DIR="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
-exec "$SCRIPT_DIR/mietclaw" --model 27b "$@"
