@@ -59,7 +59,7 @@
         "Cu": 63.546,
         "Ni": 58.6934
       },
-      "cluster_xyz": "../../crystalkmc-fix-diffusion-coef/TEST/1Compatibility/case2/cluster.xyz",
+      "cluster_xyz": "../sample-data/kmc/cluster.xyz",
       "diffusion_radius_lattice_units": 1.6583123951777,
       "sector_tstop": "6.0e-6",
       "stats_interval": "1e-5",
@@ -71,7 +71,7 @@
         "Ni": 0.55
       },
       "potential_assets": [
-        "../../crystalkmc-fix-diffusion-coef/TEST/1Compatibility/case2/FeCuNi.eam.alloy"
+        "../sample-data/kmc/FeCuNi.eam.alloy"
       ]
     }
   }
