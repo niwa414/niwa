@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_PATH="$0"
+while [ -L "$SCRIPT_PATH" ]; do
+  LINK_DIR="$(CDPATH= cd -- "$(dirname "$SCRIPT_PATH")" && pwd)"
+  LINK_TARGET="$(readlink "$SCRIPT_PATH")"
+  case "$LINK_TARGET" in
+    /*) SCRIPT_PATH="$LINK_TARGET" ;;
+    *) SCRIPT_PATH="$LINK_DIR/$LINK_TARGET" ;;
+  esac
+done
+
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname "$SCRIPT_PATH")" && pwd)"
+PROJECT_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)"
+
+export PYTHONPATH="$PROJECT_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+exec python3 -m miet_claw.cli mcp-server \
+  --project-root "$PROJECT_ROOT" \
+  --workspace-root "$PROJECT_ROOT/.autonomy-mcp" \
+  --output-dir "$PROJECT_ROOT/.runs" \
+  --provider local \
+  "$@"

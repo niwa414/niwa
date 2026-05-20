@@ -92,6 +92,10 @@ Examples:
 - `./tools/publish_github.sh git@github.com:<user>/fusion.git`
 - `./tools/publish_github.sh https://github.com/<user>/fusion.git`
 
+## Additional Open-Source Agents
+
+- `miet-claw/`: MIET-Claw agent and OpenClaw integration for MD/KMC workflow orchestration. This subproject carries its own MIT license in `miet-claw/LICENSE`.
+
 ## License
 
 Apache-2.0. See `LICENSE`.

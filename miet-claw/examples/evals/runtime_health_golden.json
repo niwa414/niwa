@@ -1,0 +1,82 @@
+[
+  {
+    "name": "clean repo kmc output completes",
+    "returncode": 0,
+    "run_text": "Step accepted rejected unknown time energy\n0 0 0 0 0.0 -10.0\n100 9 1 0 1.0e-06 -9.5\nLoop time of 0.25 on 1 procs for 100 steps with 10 atoms\n",
+    "expected": {
+      "status": "completed",
+      "parsed": {
+        "loop_time_seconds": 0.25,
+        "accepted_events": 9,
+        "rejected_events": 1,
+        "final_time": 100.0,
+        "final_energy": -9.5,
+        "has_loop_time": true,
+        "has_final_stats_row": true
+      },
+      "runtime_health": {
+        "status": "ok",
+        "checks": {
+          "returncode_ok": true,
+          "has_loop_time": true,
+          "has_final_stats_row": true,
+          "final_time_positive": true,
+          "abnormal_output_detected": false
+        }
+      }
+    }
+  },
+  {
+    "name": "zero return code with error marker fails",
+    "returncode": 0,
+    "run_text": "Step accepted rejected unknown time energy\n0 0 0 0 0.0 -10.0\n100 3 0 0 1.0e-06 -9.8\nLoop time of 0.10 on 1 procs for 100 steps with 10 atoms\nERROR: neighbor list failed\n",
+    "expected": {
+      "status": "failed",
+      "runtime_health": {
+        "status": "failed",
+        "checks": {
+          "returncode_ok": true,
+          "abnormal_output_detected": true,
+          "abnormal_markers": ["ERROR"]
+        }
+      }
+    }
+  },
+  {
+    "name": "missing loop time fails",
+    "returncode": 0,
+    "run_text": "Step accepted rejected unknown time energy\n0 0 0 0 0.0 -10.0\n100 3 0 0 1.0e-06 -9.8\n",
+    "expected": {
+      "status": "failed",
+      "runtime_health": {
+        "status": "failed",
+        "checks": {
+          "returncode_ok": true,
+          "has_loop_time": false,
+          "has_final_stats_row": true,
+          "final_time_positive": true
+        }
+      }
+    }
+  },
+  {
+    "name": "non-positive final simulated time fails",
+    "returncode": 0,
+    "run_text": "Step accepted rejected unknown time energy\n0 0 0 0 0.0 -10.0\nLoop time of 0.20 on 1 procs for 100 steps with 10 atoms\n",
+    "expected": {
+      "status": "failed",
+      "parsed": {
+        "final_time": 0.0,
+        "has_loop_time": true,
+        "has_final_stats_row": true
+      },
+      "runtime_health": {
+        "status": "failed",
+        "checks": {
+          "returncode_ok": true,
+          "final_time_positive": false
+        }
+      }
+    }
+  }
+]

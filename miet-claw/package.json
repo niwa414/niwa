@@ -1,0 +1,13 @@
+{
+  "name": "miet-claw-workspace",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "packages/openclaw-miet-claw-plugin"
+  ],
+  "scripts": {
+    "build:web": "npm run build --workspace @miet-claw/web",
+    "test:python": "PYTHONPATH=src python3 -m unittest discover -s tests -v",
+    "test:plugin": "node --test packages/openclaw-miet-claw-plugin/tests/*.test.mjs"
+  }
+}

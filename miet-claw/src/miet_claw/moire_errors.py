@@ -1,0 +1,2 @@
+class MoReWorkflowError(RuntimeError):
+    pass
