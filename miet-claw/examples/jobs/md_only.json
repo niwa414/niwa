@@ -1,0 +1,12 @@
+{
+  "job_id": "md_only_barrier_extraction",
+  "mode": "md_only",
+  "material_system": {
+    "name": "Barrier extraction demo"
+  },
+  "md": {
+    "engine": "lammps",
+    "command": ["lmp", "-in", "in.neb"],
+    "barriers_source": "../sample-data/md/barriers.fe-cu-ni.json"
+  }
+}

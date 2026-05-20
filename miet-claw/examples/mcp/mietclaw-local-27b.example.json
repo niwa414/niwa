@@ -1,0 +1,10 @@
+{
+  "model": "Huihui-Qwen3.5-27B-Claude-4.6-Opus-abliterated-4bit",
+  "baseURL": "http://127.0.0.1:8000/v1",
+  "apiKey": "omlx-local",
+  "mcpServers": {
+    "mietclaw": {
+      "command": "$REPO_ROOT/bin/mietclaw-mcp"
+    }
+  }
+}

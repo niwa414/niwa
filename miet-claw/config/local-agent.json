@@ -1,0 +1,44 @@
+{
+  "agent_name": "mietclaw",
+  "local_model": {
+    "base_url": "http://127.0.0.1:8000",
+    "api_key": "omlx-local",
+    "preferred_model": "27b"
+  },
+  "runtime": {
+    "conda_exec": "conda",
+    "conda_env": "miet-stack",
+    "mpi_procs": 5,
+    "neb_input": "in.neb.mosia",
+    "post_script": "neb_right.sh"
+  },
+  "moire": {
+    "case_dir": "/path/to/MoRe/Re_0.07/model_4",
+    "kmc_binary": "/path/to/misa-kmc",
+    "eam_file": "/path/to/MoRe.eam.fs",
+    "kmc_temperature": 1100.0,
+    "kmc_stats_step": "1e-10",
+    "kmc_run_time": "1e-10",
+    "kmc_seed": 3401,
+    "kmc_retry_attempts": 0,
+    "diffusion_temperatures": [
+      700.0,
+      800.0,
+      900.0,
+      1000.0,
+      1100.0,
+      1200.0
+    ],
+    "diffusion_stats_step": "1e-7",
+    "diffusion_run_time": "1e-6",
+    "diffusion_seeds": [
+      3401,
+      3402,
+      3403
+    ]
+  },
+  "bridge": {
+    "python": "python3",
+    "script": "/path/to/run_lammps_kmc_bridge.py"
+  }
+}

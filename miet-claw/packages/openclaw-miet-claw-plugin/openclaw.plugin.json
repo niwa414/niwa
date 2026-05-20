@@ -1,0 +1,41 @@
+{
+  "id": "miet-claw-sim",
+  "name": "mietclaw agent",
+  "description": "Specialized OpenClaw tool plugin for the mietclaw MD/KMC multiscale simulation agent.",
+  "skills": [],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "projectRoot": {
+        "type": "string",
+        "description": "Absolute or relative path to the mietclaw project root."
+      },
+      "pythonBin": {
+        "type": "string",
+        "description": "Python executable used to launch the orchestration CLI."
+      },
+      "defaultOutputDir": {
+        "type": "string",
+        "description": "Default output directory for generated runs."
+      }
+    }
+  },
+  "uiHints": {
+    "projectRoot": {
+      "label": "Project root",
+      "help": "Points the plugin at the mietclaw repository.",
+      "advanced": true
+    },
+    "pythonBin": {
+      "label": "Python executable",
+      "placeholder": "python3",
+      "advanced": true
+    },
+    "defaultOutputDir": {
+      "label": "Default output directory",
+      "placeholder": ".runs",
+      "advanced": true
+    }
+  }
+}
